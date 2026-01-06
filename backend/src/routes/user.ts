@@ -10,9 +10,9 @@ import { verifyEmailSchema } from "../validators/auth";
 
 const router = Router();
 
-router.get("/", authenticate, getCurrentUser);
-router.get("/events", authenticate, getUserEvents);
-router.post("/request-email-verification", authenticate, otpRequestLimiter, requestEmailVerification);
-router.post("/verify-email", authenticate, validate(verifyEmailSchema), verifyEmail);
+router.get("/me", authenticate, getCurrentUser);
+router.get("/me/events", authenticate, getUserEvents);
+router.post("/me/request-email-verification", authenticate, otpRequestLimiter, requestEmailVerification);
+router.post("/me/verify-email", authenticate, validate(verifyEmailSchema), verifyEmail);
 
 export default router;

@@ -14,7 +14,7 @@ export const createEventSchema = z.object({
 
 export const updateEventSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^\d+$/, 'Event ID must be a number'),
+        eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
     }),
     body: z.object({
         title: z.string().min(3, 'Title must be at least 3 characters').max(255, 'Title must not exceed 255 characters').optional(),
@@ -29,12 +29,12 @@ export const updateEventSchema = z.object({
 
 export const getEventSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^\d+$/, 'Event ID must be a number'),
+        eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
     }),
 });
 
 export const deleteEventSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^\d+$/, 'Event ID must be a number'),
+        eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
     }),
 });

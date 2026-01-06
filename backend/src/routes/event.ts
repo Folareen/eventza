@@ -11,10 +11,9 @@ import { createEventSchema, deleteEventSchema, getEventSchema, updateEventSchema
 const router = Router();
 
 router.get('/', getAllEvents);
-router.get('/:id', validate(getEventSchema), getEvent);
-
+router.get('/:eventId', validate(getEventSchema), getEvent);
 router.post('/', authenticate, validate(createEventSchema), createEvent);
-router.put('/:id', authenticate, validate(updateEventSchema), updateEvent);
-router.delete('/:id', authenticate, validate(deleteEventSchema), deleteEvent);
+router.put('/:eventId', authenticate, validate(updateEventSchema), updateEvent);
+router.delete('/:eventId', authenticate, validate(deleteEventSchema), deleteEvent);
 
 export default router;
