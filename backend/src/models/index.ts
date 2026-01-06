@@ -1,3 +1,4 @@
+import Event from './Event';
 import Otp from './Otp';
 import User from './User';
 
@@ -11,5 +12,15 @@ Otp.belongsTo(User, {
     as: 'user',
 });
 
-export { Otp, User };
+User.hasMany(Event, {
+    foreignKey: 'organizerId',
+    as: 'events',
+});
+
+Event.belongsTo(User, {
+    foreignKey: 'organizerId',
+    as: 'organizer',
+});
+
+export { Event, Otp, User };
 

@@ -6,6 +6,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import sequelize from './src/config/database';
 import './src/models/index';
 import authRoutes from './src/routes/auth';
+import eventRoutes from './src/routes/event';
 import userRoutes from './src/routes/user';
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/event', eventRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error('Global error handler:', err);
