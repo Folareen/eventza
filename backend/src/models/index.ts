@@ -2,6 +2,7 @@ import Event from './Event';
 import Otp from './Otp';
 import User from './User';
 import Ticket from './Ticket';
+import Order from './Order';
 
 User.hasMany(Otp, {
     foreignKey: 'userId',
@@ -34,5 +35,15 @@ Ticket.belongsTo(Event, {
     as: 'event',
 });
 
-export { Event, Otp, User, Ticket };
+Ticket.hasMany(Order, {
+    foreignKey: 'ticketId',
+    as: 'orders',
+});
+
+Order.belongsTo(Ticket, {
+    foreignKey: 'ticketId',
+    as: 'ticket',
+});
+
+export { Event, Otp, User, Ticket, Order };
 

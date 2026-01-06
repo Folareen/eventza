@@ -8,6 +8,7 @@ import './src/models/index';
 import authRoutes from './src/routes/auth';
 import eventRoutes from './src/routes/event';
 import userRoutes from './src/routes/user';
+import orderRoutes from './src/routes/order';
 
 const app = express();
 
@@ -15,9 +16,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/events', eventRoutes);
+app.use('/api/v1/orders', orderRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error('Global error handler:', err);
