@@ -11,6 +11,7 @@ class Order extends Model<InferAttributes<Order>, InferCreationAttributes<Order>
     declare amount: number;
     declare code: string;
     declare status: OrderStatus;
+    declare checkedIn: CreationOptional<boolean>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 }
@@ -48,6 +49,11 @@ Order.init({
         type: DataTypes.ENUM('pending', 'confirmed', 'cancelled'),
         allowNull: false,
         defaultValue: 'pending',
+    },
+    checkedIn: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
     },
     createdAt: {
         type: DataTypes.DATE,

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { authenticate } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
-
 import { createEvent } from '../controllers/event/createEvent';
 import { deleteEvent } from '../controllers/event/deleteEvent';
 import { getAllEvents } from '../controllers/event/getAllEvents';
@@ -9,6 +8,7 @@ import { getEvent } from '../controllers/event/getEvent';
 import { updateEvent } from '../controllers/event/updateEvent';
 import { createEventSchema, deleteEventSchema, eventListQuerySchema, getEventSchema, updateEventSchema } from '../validators/event';
 import ticketRouter from './ticket';
+import { checkInOrder } from '../controllers/event/checkInOrder';
 
 const router = Router();
 
@@ -18,6 +18,8 @@ router.post('/', authenticate, validate(createEventSchema), createEvent);
 router.put('/:eventId', authenticate, validate(updateEventSchema), updateEvent);
 router.delete('/:eventId', authenticate, validate(deleteEventSchema), deleteEvent);
 
+
+router.post('/:eventId/checkin', authenticate, checkInOrder);
 router.use('/:eventId/tickets', ticketRouter);
 
 export default router;
