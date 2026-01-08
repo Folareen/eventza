@@ -61,6 +61,9 @@ Ticket.init({
 }, {
     tableName: 'tickets',
     sequelize,
+    indexes: [
+        { fields: ['eventId'] },
+    ],
 });
 
 export default Ticket;

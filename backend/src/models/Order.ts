@@ -60,6 +60,11 @@ Order.init({
 }, {
     tableName: 'orders',
     sequelize,
+    indexes: [
+        { fields: ['ticketId'] },
+        { fields: ['email'] },
+        { unique: true, fields: ['code'] },
+    ],
 });
 
 export default Order;

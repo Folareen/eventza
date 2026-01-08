@@ -8,6 +8,10 @@ class Event extends Model<InferAttributes<Event>, InferCreationAttributes<Event>
     declare date: Date;
     declare time: string;
     declare venue: string;
+    declare city: string;
+    declare state: string;
+    declare country: string;
+    declare category: string;
     declare capacity: number;
     declare bannerImage: string;
     declare organizerId: number;
@@ -41,6 +45,22 @@ Event.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
+    city: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    state: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    country: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    category: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     capacity: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -69,6 +89,14 @@ Event.init({
 }, {
     tableName: 'events',
     sequelize,
+    indexes: [
+        { fields: ['organizerId'] },
+        { fields: ['city'] },
+        { fields: ['state'] },
+        { fields: ['country'] },
+        { fields: ['category'] },
+        { fields: ['date'] },
+    ],
 });
 
 export default Event;

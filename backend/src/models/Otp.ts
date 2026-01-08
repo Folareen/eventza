@@ -59,6 +59,9 @@ Otp.init({
 }, {
     tableName: 'otps',
     sequelize,
+    indexes: [
+        { fields: ['userId'] },
+    ],
 });
 
 export default Otp;

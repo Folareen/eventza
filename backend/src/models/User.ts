@@ -45,6 +45,9 @@ User.init({
 }, {
     tableName: 'users',
     sequelize,
+    indexes: [
+        { unique: true, fields: ['email'] },
+    ],
 });
 
 export default User;
