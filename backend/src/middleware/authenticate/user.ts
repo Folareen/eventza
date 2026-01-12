@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/User";
-import { verifyAccessToken } from "../utils/jwt";
+import User from "../../models/User";
+import { verifyUserAccessToken } from "../../utils/jwt";
 
 declare global {
     namespace Express {
@@ -10,7 +10,7 @@ declare global {
     }
 }
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
 
@@ -20,7 +20,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         const token = authHeader.substring(7);
 
-        const payload = verifyAccessToken(token);
+        const payload = verifyUserAccessToken(token);
 
         if (!payload) {
             return res.status(401).json({ error: "Invalid or expired access token" });

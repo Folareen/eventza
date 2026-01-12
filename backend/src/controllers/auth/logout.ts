@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import User from "../../models/User";
-import { verifyRefreshToken } from "../../utils/jwt";
+import { verifyUserRefreshToken } from "../../utils/jwt";
 
 export const logout = async (req: Request, res: Response) => {
     try {
         const { refreshToken } = req.body;
 
-        const payload = verifyRefreshToken(refreshToken);
+        const payload = verifyUserRefreshToken(refreshToken);
 
         if (!payload) {
             return res.status(401).json({ error: "Invalid or expired refresh token" });

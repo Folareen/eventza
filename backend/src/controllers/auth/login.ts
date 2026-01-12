@@ -1,7 +1,7 @@
 import argon2 from "argon2";
 import { Request, Response } from "express";
 import User from "../../models/User";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
+import { generateUserAccessToken, generateUserRefreshToken } from "../../utils/jwt";
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -19,8 +19,8 @@ export const login = async (req: Request, res: Response) => {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        const accessToken = generateAccessToken(user.id);
-        const refreshToken = generateRefreshToken(user.id);
+        const accessToken = generateUserAccessToken(user.id);
+        const refreshToken = generateUserRefreshToken(user.id);
 
         await user.update({ refreshToken });
 

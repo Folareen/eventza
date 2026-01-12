@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/authenticate';
+import { authenticateUser } from '../middleware/authenticate/user';
 import { validate } from '../middleware/validate';
 import { createTicket } from '../controllers/ticket/createTicket';
 import { updateTicket } from '../controllers/ticket/updateTicket';
@@ -10,8 +10,8 @@ import { createTicketSchema, updateTicketSchema, deleteTicketSchema, getEventTic
 const router = Router({ mergeParams: true });
 
 router.get('/', validate(getEventTicketsSchema), getEventTickets);
-router.post('/', authenticate, validate(createTicketSchema), createTicket);
-router.put('/:ticketId', authenticate, validate(updateTicketSchema), updateTicket);
-router.delete('/:ticketId', authenticate, validate(deleteTicketSchema), deleteTicket);
+router.post('/', authenticateUser, validate(createTicketSchema), createTicket);
+router.put('/:ticketId', authenticateUser, validate(updateTicketSchema), updateTicket);
+router.delete('/:ticketId', authenticateUser, validate(deleteTicketSchema), deleteTicket);
 
 export default router;

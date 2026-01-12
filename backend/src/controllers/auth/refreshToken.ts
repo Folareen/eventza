@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import User from "../../models/User";
-import { generateAccessToken, verifyRefreshToken } from "../../utils/jwt";
+import { generateUserAccessToken, verifyUserRefreshToken } from "../../utils/jwt";
 
 export const refreshToken = async (req: Request, res: Response) => {
     try {
         const { refreshToken } = req.body;
 
-        const payload = verifyRefreshToken(refreshToken);
+        const payload = verifyUserRefreshToken(refreshToken);
 
         if (!payload) {
             return res.status(401).json({ error: "Invalid or expired refresh token" });
@@ -18,7 +18,7 @@ export const refreshToken = async (req: Request, res: Response) => {
             return res.status(401).json({ error: "Invalid refresh token" });
         }
 
-        const newAccessToken = generateAccessToken(user.id);
+        const newAccessToken = generateUserAccessToken(user.id);
 
         res.json({
             accessToken: newAccessToken

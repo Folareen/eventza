@@ -5,7 +5,7 @@ import { OtpType } from "../../models/Otp";
 import User from "../../models/User";
 import { sendWelcomeEmail } from "../../services/email";
 import { createOtp } from "../../services/otp";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
+import { generateUserAccessToken, generateUserRefreshToken } from "../../utils/jwt";
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -26,8 +26,8 @@ export const register = async (req: Request, res: Response) => {
             password: hashedPassword
         });
 
-        const accessToken = generateAccessToken(user.id);
-        const refreshToken = generateRefreshToken(user.id);
+        const accessToken = generateUserAccessToken(user.id);
+        const refreshToken = generateUserRefreshToken(user.id);
 
         await user.update({ refreshToken });
 

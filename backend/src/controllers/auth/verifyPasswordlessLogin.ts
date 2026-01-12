@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { OtpType } from "../../models/Otp";
 import User from "../../models/User";
 import { verifyOtp } from "../../services/otp";
-import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
+import { generateUserAccessToken, generateUserRefreshToken } from "../../utils/jwt";
 
 export const verifyPasswordlessLogin = async (req: Request, res: Response) => {
     try {
@@ -20,8 +20,8 @@ export const verifyPasswordlessLogin = async (req: Request, res: Response) => {
             return res.status(400).json({ error: "Invalid or expired OTP" });
         }
 
-        const accessToken = generateAccessToken(user.id);
-        const refreshToken = generateRefreshToken(user.id);
+        const accessToken = generateUserAccessToken(user.id);
+        const refreshToken = generateUserRefreshToken(user.id);
 
         await user.update({ refreshToken });
 
