@@ -7,7 +7,7 @@ import { scannerLoginSchema } from '../validators/scanner';
 
 const router = Router();
 
-router.post('/login', validate(scannerLoginSchema), scannerLogin);
+router.post('/login', validate(scannerLoginSchema, 'body'), scannerLogin);
 
 router.get('/:scannerId/events', getScannerEvents);
 router.post('/:eventId/checkin', checkInTicket);

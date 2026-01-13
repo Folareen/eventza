@@ -10,6 +10,7 @@ import eventRoutes from './src/routes/event';
 import userRoutes from './src/routes/user';
 import orderRoutes from './src/routes/order';
 import scannerRoutes from './src/routes/scanner';
+import { notFound } from './src/middleware/notFound';
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/events', eventRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/scanners', scannerRoutes);
+app.use(notFound)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error('Global error handler:', err);

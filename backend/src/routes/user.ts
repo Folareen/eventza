@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { requestEmailVerification } from "../controllers/auth/requestEmailVerification";
-import { verifyEmail } from "../controllers/auth/verifyEmail";
+import { requestEmailVerification } from "../controllers/user/requestEmailVerification";
+import { verifyEmail } from "../controllers/user/verifyEmail";
 import { getUserEvents } from "../controllers/event/getUserEvents";
 import { getUserEvent } from "../controllers/event/getUserEvent";
 import { getUserEventTickets } from "../controllers/ticket/getUserEventTickets";
@@ -17,13 +17,15 @@ import { updateScanner } from '../controllers/scanner/updateScanner';
 import { deleteScanner } from '../controllers/scanner/deleteScanner';
 import { listScanners } from '../controllers/scanner/getScanners';
 import { createScannerSchema, updateScannerSchema } from '../validators/scanner';
+import { logout } from "../controllers/user/logout";
 
 const router = Router();
 
+router.post("/logout", authenticateUser, logout);
 router.get("/me", authenticateUser, getCurrentUser);
-router.post("/me/scanners", authenticateUser, validate(createScannerSchema), createScanner);
+router.post("/me/scanners", authenticateUser, validate(createScannerSchema, 'body'), createScanner);
 router.get("/me/scanners", authenticateUser, listScanners);
-router.put("/me/scanners/:scannerId", authenticateUser, validate(updateScannerSchema), updateScanner);
+router.put("/me/scanners/:scannerId", authenticateUser, validate(updateScannerSchema, 'body'), updateScanner);
 router.delete("/me/scanners/:scannerId", authenticateUser, deleteScanner);
 router.get("/me/events", authenticateUser, getUserEvents);
 router.get("/me/events/:eventId", authenticateUser, getUserEvent);
@@ -32,6 +34,6 @@ router.get("/me/events/:eventId/tickets/:ticketId", authenticateUser, getUserEve
 router.get("/me/events/:eventId/orders", authenticateUser, getUserEventOrders);
 router.get("/me/events/:eventId/orders/:orderId", authenticateUser, getUserEventOrder);
 router.post("/me/request-email-verification", authenticateUser, otpRequestLimiter, requestEmailVerification);
-router.post("/me/verify-email", authenticateUser, validate(verifyEmailSchema), verifyEmail);
+router.post("/me/verify-email", authenticateUser, validate(verifyEmailSchema, 'body'), verifyEmail);
 
 export default router;

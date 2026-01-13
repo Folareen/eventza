@@ -9,9 +9,9 @@ import { createTicketSchema, updateTicketSchema, deleteTicketSchema, getEventTic
 
 const router = Router({ mergeParams: true });
 
-router.get('/', validate(getEventTicketsSchema), getEventTickets);
-router.post('/', authenticateUser, validate(createTicketSchema), createTicket);
-router.put('/:ticketId', authenticateUser, validate(updateTicketSchema), updateTicket);
-router.delete('/:ticketId', authenticateUser, validate(deleteTicketSchema), deleteTicket);
+router.get('/', validate(getEventTicketsSchema, 'query'), getEventTickets);
+router.post('/', authenticateUser, validate(createTicketSchema, 'body'), createTicket);
+router.put('/:ticketId', authenticateUser, validate(updateTicketSchema, 'body'), updateTicket);
+router.delete('/:ticketId', authenticateUser, validate(deleteTicketSchema, 'params'), deleteTicket);
 
 export default router;

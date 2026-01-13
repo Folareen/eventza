@@ -6,7 +6,7 @@ import { createOrderSchema, getOrderSchema } from '../validators/order';
 
 const router = Router();
 
-router.post('/', validate(createOrderSchema), createOrder);
-router.get('/:orderId', validate(getOrderSchema), getOrder);
+router.post('/', validate(createOrderSchema, 'body'), createOrder);
+router.get('/:orderId', validate(getOrderSchema, 'params'), getOrder);
 
 export default router;

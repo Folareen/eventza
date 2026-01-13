@@ -13,12 +13,11 @@ import ticketRouter from './ticket';
 
 const router = Router();
 
-router.get('/', validate(eventListQuerySchema), getAllEvents);
-router.get('/:eventId', validate(getEventSchema), getEvent);
-router.post('/', authenticateUser, validate(createEventSchema), createEvent);
-router.put('/:eventId', authenticateUser, validate(updateEventSchema), updateEvent);
-router.delete('/:eventId', authenticateUser, validate(deleteEventSchema), deleteEvent);
-
+router.get('/', validate(eventListQuerySchema, 'query'), getAllEvents);
+router.get('/:eventId', validate(getEventSchema, 'params'), getEvent);
+router.post('/', authenticateUser, validate(createEventSchema, 'body'), createEvent);
+router.put('/:eventId', authenticateUser, validate(updateEventSchema, 'body'), updateEvent);
+router.delete('/:eventId', authenticateUser, validate(deleteEventSchema, 'params'), deleteEvent);
 
 router.post('/:eventId/checkin', authenticateScanner, checkInOrder);
 router.use('/:eventId/tickets', ticketRouter);

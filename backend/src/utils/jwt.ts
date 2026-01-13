@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 
-const USER_ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET!
-const USER_REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET!
-const SCANNER_ACCESS_TOKEN_SECRET = process.env.SCANNER_TOKEN_SECRET!
+const USER_ACCESS_TOKEN_SECRET = process.env.USER_ACCESS_TOKEN_SECRET!
+const USER_REFRESH_TOKEN_SECRET = process.env.USER_REFRESH_TOKEN_SECRET!
+const SCANNER_ACCESS_TOKEN_SECRET = process.env.SCANNER_ACCESS_TOKEN_SECRET!
 
 export const generateUserAccessToken = (userId: number): string => {
     return jwt.sign({ userId }, USER_ACCESS_TOKEN_SECRET, { expiresIn: '1h' });

@@ -27,7 +27,7 @@ export const authenticateUser = async (req: Request, res: Response, next: NextFu
         }
 
         const user = await User.findByPk(payload.userId, {
-            attributes: { exclude: ['password', 'refreshToken'] }
+            attributes: { exclude: ['password'] }
         });
 
         if (!user) {

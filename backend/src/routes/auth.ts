@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { login } from "../controllers/auth/login";
-import { logout } from "../controllers/auth/logout";
 import { requestPasswordlessLogin } from "../controllers/auth/passwordlessLogin";
 import { refreshToken } from "../controllers/auth/refreshToken";
 import { register } from "../controllers/auth/register";
@@ -11,24 +10,22 @@ import { loginLimiter, otpRequestLimiter, registerLimiter } from "../middleware/
 import { validate } from "../middleware/validate";
 import {
     loginSchema,
-    logoutSchema,
     refreshTokenSchema,
     registerSchema,
     requestPasswordlessLoginSchema,
     requestPasswordResetSchema,
     resetPasswordSchema,
-    verifyPasswordlessLoginSchema,
+    verifyPasswordlessLoginSchema
 } from "../validators/auth";
 
 const router = Router();
 
-router.post("/register", registerLimiter, validate(registerSchema), register);
-router.post("/login", loginLimiter, validate(loginSchema), login);
-router.post("/logout", validate(logoutSchema), logout);
-router.post("/refresh-token", validate(refreshTokenSchema), refreshToken);
-router.post("/request-password-reset", otpRequestLimiter, validate(requestPasswordResetSchema), requestPasswordReset);
-router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
-router.post("/request-passwordless-login", otpRequestLimiter, validate(requestPasswordlessLoginSchema), requestPasswordlessLogin);
-router.post("/verify-passwordless-login", loginLimiter, validate(verifyPasswordlessLoginSchema), verifyPasswordlessLogin);
+router.post("/register", registerLimiter, validate(registerSchema, 'body'), register);
+router.post("/login", loginLimiter, validate(loginSchema, 'body'), login);
+router.post("/refresh-token", validate(refreshTokenSchema, 'body'), refreshToken);
+router.post("/request-password-reset", otpRequestLimiter, validate(requestPasswordResetSchema, 'body'), requestPasswordReset);
+router.post("/reset-password", validate(resetPasswordSchema, 'body'), resetPassword);
+router.post("/request-passwordless-login", otpRequestLimiter, validate(requestPasswordlessLoginSchema, 'body'), requestPasswordlessLogin);
+router.post("/verify-passwordless-login", loginLimiter, validate(verifyPasswordlessLoginSchema, 'body'), verifyPasswordlessLogin);
 
 export default router;
