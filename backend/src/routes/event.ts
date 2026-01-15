@@ -15,7 +15,7 @@ const router = Router();
 router.get('/', validate(eventListQuerySchema, 'query'), getAllEvents);
 router.get('/:eventId', validate(getEventSchema, 'params'), getEvent);
 router.post('/', authenticateUser, upload.single('bannerImage'), validate(createEventSchema), createEvent);
-router.put('/:eventId', authenticateUser, validate(updateEventSchema, 'body'), updateEvent);
+router.put('/:eventId', authenticateUser, upload.single('bannerImage'), validate(updateEventSchema, 'body'), updateEvent);
 router.delete('/:eventId', authenticateUser, validate(deleteEventSchema, 'params'), deleteEvent);
 
 router.use('/:eventId/tickets', ticketRouter);
