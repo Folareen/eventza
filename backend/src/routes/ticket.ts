@@ -1,11 +1,13 @@
 import { Router } from 'express';
+import { createTicket } from '../controllers/ticket/createTicket';
+import { deleteTicket } from '../controllers/ticket/deleteTicket';
+import { getEventTickets } from '../controllers/ticket/getEventTickets';
+import { updateTicket } from '../controllers/ticket/updateTicket';
 import { authenticateUser } from '../middleware/authenticate/user';
 import { validate } from '../middleware/validate';
-import { createTicket } from '../controllers/ticket/createTicket';
-import { updateTicket } from '../controllers/ticket/updateTicket';
-import { getEventTickets } from '../controllers/ticket/getEventTickets';
-import { deleteTicket } from '../controllers/ticket/deleteTicket';
-import { createTicketSchema, updateTicketSchema, deleteTicketSchema, getEventTicketsSchema } from '../validators/ticket';
+import { createTicketSchema, deleteTicketSchema, getEventTicketsSchema, updateTicketSchema } from '../validators/ticket';
+import { createOrder } from '../controllers/order/createOrder';
+import { createOrderSchema } from '../validators/order';
 
 const router = Router({ mergeParams: true });
 
@@ -24,5 +26,12 @@ router.put('/:ticketId',
     updateTicket
 );
 router.delete('/:ticketId', authenticateUser, validate(deleteTicketSchema, 'params'), deleteTicket);
+
+router.post('/:ticketId/order',
+    validate(createOrderSchema.shape.params, 'params'),
+    validate(createOrderSchema.shape.body, 'body'),
+    createOrder
+);
+
 
 export default router;

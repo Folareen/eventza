@@ -9,7 +9,6 @@ import { notFound } from './src/middleware/notFound';
 import './src/models/index';
 import authRoutes from './src/routes/auth';
 import eventRoutes from './src/routes/event';
-import orderRoutes from './src/routes/order';
 import scannerRoutes from './src/routes/scanner';
 import userRoutes from './src/routes/user';
 
@@ -23,7 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/events', eventRoutes);
-app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/scanners', scannerRoutes);
 app.use(notFound)
 
