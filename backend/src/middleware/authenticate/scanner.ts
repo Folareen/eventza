@@ -1,15 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Scanner from "../../models/Scanner";
-import jwt from "jsonwebtoken";
 import { verifyScannerAccessToken } from "../../utils/jwt";
-
-declare global {
-    namespace Express {
-        interface Request {
-            scanner?: Scanner;
-        }
-    }
-}
 
 export const authenticateScanner = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -28,7 +19,7 @@ export const authenticateScanner = async (req: Request, res: Response, next: Nex
         }
 
         const scanner = await Scanner.findByPk(payload.scannerId, {
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ['password'], include: ['eventIds'] }
         });
 
         if (!scanner) {

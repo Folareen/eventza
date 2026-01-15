@@ -3,8 +3,6 @@ import argon2 from 'argon2';
 import { Scanner } from '../../models';
 import { generateScannerAccessToken } from '../../utils/jwt';
 
-const SCANNER_JWT_SECRET = process.env.ACCESS_TOKEN_SECRET!;
-
 export const scannerLogin = async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;

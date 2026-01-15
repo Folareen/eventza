@@ -4,13 +4,14 @@ dotenv.config();
 import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import sequelize from './src/config/database';
+import './src/middleware/authenticate/index';
+import { notFound } from './src/middleware/notFound';
 import './src/models/index';
 import authRoutes from './src/routes/auth';
 import eventRoutes from './src/routes/event';
-import userRoutes from './src/routes/user';
 import orderRoutes from './src/routes/order';
 import scannerRoutes from './src/routes/scanner';
-import { notFound } from './src/middleware/notFound';
+import userRoutes from './src/routes/user';
 
 const app = express();
 
