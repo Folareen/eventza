@@ -6,7 +6,7 @@ export const getEvent = async (req: Request, res: Response) => {
     try {
         const { eventId } = req.params;
         const event = await Event.findOne({
-            where: { id: eventId, organizerId: req.user!.id },
+            where: { id: eventId },
             include: [
                 {
                     model: User,

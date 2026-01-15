@@ -18,7 +18,8 @@ export const COUNTRIES = [
     { code: 'DK', name: 'Denmark' },
     { code: 'NO', name: 'Norway' },
     { code: 'CH', name: 'Switzerland' },
-    { code: 'PT', name: 'Portugal' }
+    { code: 'PT', name: 'Portugal' },
+    { code: 'NG', name: 'Nigeria' }
 ];
 
 export const STATES: Record<string, string[]> = {

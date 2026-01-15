@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import Event from '../../models/Event';
 import { uploadToS3 } from '../../services/s3';
+
 type MulterRequestWithFile = Request & { file?: Express.Multer.File };
 
 export const createEvent = async (req: Request, res: Response) => {
     try {
-        const { title, description, date, time, venue, capacity } = req.body;
+        const { title, description, date, time, venue, capacity, category, state, country } = req.body;
         let bannerImageUrl = req.body.bannerImage;
         const reqWithFile = req as MulterRequestWithFile;
         if (reqWithFile.file) {
@@ -18,6 +19,9 @@ export const createEvent = async (req: Request, res: Response) => {
             time,
             venue,
             capacity,
+            category,
+            country,
+            state,
             ...(bannerImageUrl && { bannerImage: bannerImageUrl }),
             organizerId: req.user!.id,
         });

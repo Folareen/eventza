@@ -17,7 +17,6 @@ export async function uploadToS3(file: Express.Multer.File, folder = 'events') {
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
-        ACL: 'public-read',
     }));
     return `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 }

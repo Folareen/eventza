@@ -1,0 +1,20 @@
+
+export const EVENT_CATEGORIES = [
+    'Music',
+    'Arts & Culture',
+    'Comedy',
+    'Theatre',
+    'Business & Networking',
+    'Technology',
+    'Education',
+    'Health & Wellness',
+    'Sports & Fitness',
+    'Food & Drink',
+    'Family & Kids',
+    'Film & Media',
+    'Community',
+    'Festivals & Fairs',
+    'Nightlife',
+    'Charity & Causes',
+    'Other',
+];
