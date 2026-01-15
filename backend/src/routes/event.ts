@@ -7,12 +7,12 @@ import { updateEvent } from '../controllers/event/updateEvent';
 import { authenticateUser } from '../middleware/authenticate/user';
 import { upload } from '../middleware/upload';
 import { validate } from '../middleware/validate';
-import { createEventSchema, deleteEventSchema, eventListQuerySchema, getEventSchema, updateEventSchema } from '../validators/event';
+import { createEventSchema, deleteEventSchema, getAllEventsQuerySchema, getEventSchema, updateEventSchema } from '../validators/event';
 import ticketRouter from './ticket';
 
 const router = Router();
 
-router.get('/', validate(eventListQuerySchema, 'query'), getAllEvents);
+router.get('/', validate(getAllEventsQuerySchema, 'query'), getAllEvents);
 router.get('/:eventId', validate(getEventSchema, 'params'), getEvent);
 router.post('/', authenticateUser, upload.single('bannerImage'), validate(createEventSchema), createEvent);
 router.put('/:eventId', authenticateUser, upload.single('bannerImage'), validate(updateEventSchema, 'body'), updateEvent);

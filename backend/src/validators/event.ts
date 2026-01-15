@@ -79,31 +79,18 @@ export const getEventSchema = z.object({
     eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
 });
 
-export const eventListQuerySchema = z.object({
-    country: z.string().optional().refine(
-        val => !val || COUNTRIES.some(c => c.code === val),
-        { message: 'Invalid country' }
-    ),
+export const getAllEventsQuerySchema = z.object({
+    country: z.string().optional(),
     state: z.string().optional(),
     category: z.string().optional(),
-    date: z.string().optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
     search: z.string().optional(),
     sort: z.enum(['date', 'createdAt']).optional(),
     order: z.enum(['asc', 'desc']).optional(),
     page: z.string().optional().default('1'),
     limit: z.string().optional().default('20'),
-}).superRefine((data, ctx) => {
-    if (data.state && data.country) {
-        if (!STATES[data.country]?.includes(data.state)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'Invalid state for country',
-                path: ['state']
-            });
-        }
-    }
-});
-
+})
 export const deleteEventSchema = z.object({
     eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
 });
