@@ -13,6 +13,7 @@ export const getEvent = async (req: Request, res: Response) => {
                     as: 'organizer',
                     attributes: ['id', 'firstName', 'lastName', 'email'],
                 },
+                'tickets',
             ],
         });
         if (!event) {

@@ -26,14 +26,10 @@ export const updateTicketSchema = z.object({
 });
 
 export const deleteTicketSchema = z.object({
-    params: z.object({
-        eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
-        ticketId: z.string().regex(/^\d+$/, 'Ticket ID must be a number'),
-    }),
+    eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
+    ticketId: z.string().regex(/^\d+$/, 'Ticket ID must be a number'),
 });
 
 export const getEventTicketsSchema = z.object({
-    params: z.object({
-        eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
-    }),
+    eventId: z.string().regex(/^\d+$/, 'Event ID must be a number'),
 });
