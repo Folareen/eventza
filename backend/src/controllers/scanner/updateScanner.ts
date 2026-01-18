@@ -16,7 +16,7 @@ export const updateScanner = async (req: Request, res: Response) => {
             const events = await Event.findAll({ where: { id: eventIds, organizerId: userId } });
             await scanner.setEvents(events);
         }
-        res.json({ scanner });
+        res.json({ scanner: { id: scanner.id, username: scanner.username, eventIds: eventIds || [] } });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update scanner' });
     }

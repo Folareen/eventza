@@ -19,7 +19,10 @@ export const authenticateScanner = async (req: Request, res: Response, next: Nex
         }
 
         const scanner = await Scanner.findByPk(payload.scannerId, {
-            attributes: { exclude: ['password'], include: ['eventIds'] }
+            include: ['events'],
+            attributes: {
+                exclude: ['password'],
+            }
         });
 
         if (!scanner) {
@@ -30,6 +33,7 @@ export const authenticateScanner = async (req: Request, res: Response, next: Nex
 
         next();
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ error: "Internal server error" });
     }
 };

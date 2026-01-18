@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import argon2 from 'argon2';
-import { Scanner } from '../../models';
+import { Event, Scanner } from '../../models';
 import { generateScannerAccessToken } from '../../utils/jwt';
 
 export const scannerLogin = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ export const scannerLogin = async (req: Request, res: Response) => {
 
         const token = generateScannerAccessToken(scanner.id);
 
-        res.json({ token, scanner: { id: scanner.id, username: scanner.username, eventIds: scanner.events?.map((e: any) => e.id) } });
+        res.json({ token, scanner: { id: scanner.id, username: scanner.username, eventIds: scanner.events?.map((e: Event) => e.id) } });
     } catch (error) {
         res.status(500).json({ error: 'Login failed' });
     }

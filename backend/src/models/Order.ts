@@ -1,5 +1,6 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model } from 'sequelize';
 import sequelize from '../config/database';
+import Ticket from './Ticket';
 
 export type OrderStatus = 'pending' | 'confirmed' | 'cancelled';
 
@@ -14,6 +15,8 @@ class Order extends Model<InferAttributes<Order>, InferCreationAttributes<Order>
     declare checkedIn: CreationOptional<boolean>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
+
+    declare getTicket: () => Promise<Ticket>;
 }
 
 Order.init({

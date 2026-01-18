@@ -3,7 +3,6 @@ import { getUserEvent } from "../controllers/event/getUserEvent";
 import { getUserEvents } from "../controllers/event/getUserEvents";
 import { getUserEventOrder } from "../controllers/order/getUserEventOrder";
 import { getUserEventOrders } from "../controllers/order/getUserEventOrders";
-import { listScanners } from '../controllers/scanner/getScanners';
 import { getUserEventTicket } from "../controllers/ticket/getUserEventTicket";
 import { getUserEventTickets } from "../controllers/ticket/getUserEventTickets";
 import { getCurrentUser } from "../controllers/user/getCurrentUser";
@@ -19,7 +18,6 @@ const router = Router();
 
 router.post("/logout", authenticateUser, logout);
 router.get("/me", authenticateUser, getCurrentUser);
-router.get("/me/scanners", authenticateUser, listScanners);
 router.get("/me/events", authenticateUser, getUserEvents);
 router.get("/me/events/:eventId", authenticateUser, getUserEvent);
 router.get("/me/events/:eventId/tickets", authenticateUser, getUserEventTickets);

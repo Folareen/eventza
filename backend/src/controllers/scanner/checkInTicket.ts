@@ -12,7 +12,7 @@ export const checkInTicket = async (req: Request, res: Response) => {
         }
         if (!scanner) return res.status(401).json({ error: 'Unauthorized' });
 
-        const eventIds = scanner.events?.map((id: any) => Number(id)) || [];
+        const eventIds = scanner.events?.map((event: Event) => Number(event.id)) || [];
         if (!eventIds.includes(Number(eventId))) {
             return res.status(403).json({ error: 'Scanner not allowed for this event' });
         }
@@ -22,8 +22,8 @@ export const checkInTicket = async (req: Request, res: Response) => {
 
         const order = await Order.findOne({ where: { code } });
         if (!order) return res.status(404).json({ error: 'Order not found' });
-        if ((order as any).ticketId) {
-            const ticket = await (order as any).getTicket?.();
+        if ((order as Order).ticketId) {
+            const ticket = await order?.getTicket?.();
             if (ticket && ticket.eventId !== event.id) {
                 return res.status(400).json({ error: 'Order does not belong to this event' });
             }
@@ -36,6 +36,7 @@ export const checkInTicket = async (req: Request, res: Response) => {
         await order.save();
         res.json({ message: 'Check-in successful', order });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: 'Failed to check in' });
     }
 };

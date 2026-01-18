@@ -26,7 +26,6 @@ app.use('/api/v1/scanners', scannerRoutes);
 app.use(notFound)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error('Global error handler:', err);
     res.status(500).json({ error: 'Internal server error' });
 });
 

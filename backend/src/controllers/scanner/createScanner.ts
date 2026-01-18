@@ -16,7 +16,13 @@ export const createScanner = async (req: Request, res: Response) => {
             const events = await Event.findAll({ where: { id: eventIds, organizerId: userId } });
             await scanner.setEvents(events);
         }
-        res.status(201).json({ scanner });
+        res.status(201).json({
+            scanner: {
+                id: scanner.id,
+                username: scanner.username,
+                eventIds: eventIds || [],
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to create scanner' });
     }
