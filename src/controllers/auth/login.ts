@@ -32,7 +32,8 @@ export const login = async (req: Request, res: Response) => {
                 id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email
+                email: user.email,
+                emailVerified: user.emailVerified
             }
         });
     } catch (error) {

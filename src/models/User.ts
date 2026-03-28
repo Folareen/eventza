@@ -9,6 +9,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare password: CreationOptional<string | null>;
     declare refreshToken: CreationOptional<string | null>;
     declare emailVerified: CreationOptional<boolean>;
+    declare stripeAccountId: CreationOptional<string | null>;
 }
 
 User.init({
@@ -41,6 +42,11 @@ User.init({
     emailVerified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+    },
+    stripeAccountId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
     },
 }, {
     tableName: 'users',

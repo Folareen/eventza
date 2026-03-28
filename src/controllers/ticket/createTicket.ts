@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Ticket, Event } from '../../models';
+// import { createTicketOnStripe } from '../../services/stripe';
 
 export const createTicket = async (req: Request, res: Response) => {
     try {
@@ -9,14 +10,18 @@ export const createTicket = async (req: Request, res: Response) => {
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }
-        const ticket = await Ticket.create({
+        const ticket = Ticket.build({
             eventId: Number(eventId),
             name,
             description,
             price,
             quantityAvailable,
-            quantitySold: 0,
         });
+
+        // const stripeProduct = await createTicketOnStripe()
+
+        await ticket.save()
+
         res.status(201).json({ ticket });
     } catch (error) {
         res.status(500).json({ error: 'Failed to create ticket' });

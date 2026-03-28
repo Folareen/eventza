@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize';
 import Otp, { OtpStatus, OtpType } from '../models/Otp';
 import { calculateOtpExpiry, generateOtp, isOtpExpired } from '../utils/otp';
 
@@ -22,7 +23,8 @@ export const createOtp = async (
 export const verifyOtp = async (
     userId: number,
     otp: string,
-    type: OtpType
+    type: OtpType,
+    transaction?: Transaction
 ): Promise<{ valid: boolean }> => {
     const otpRecord = await Otp.findOne({
         where: {
@@ -30,7 +32,7 @@ export const verifyOtp = async (
             otp,
             type,
             status: OtpStatus.ACTIVE,
-        },
+        }
     });
 
     if (!otpRecord) {
@@ -38,11 +40,11 @@ export const verifyOtp = async (
     }
 
     if (isOtpExpired(otpRecord.expiresAt)) {
-        await otpRecord.update({ status: OtpStatus.EXPIRED });
+        await otpRecord.update({ status: OtpStatus.EXPIRED }, { transaction });
         return { valid: false };
     }
 
-    await otpRecord.update({ status: OtpStatus.VERIFIED });
+    await otpRecord.update({ status: OtpStatus.VERIFIED }, { transaction });
 
     return { valid: true };
 };
