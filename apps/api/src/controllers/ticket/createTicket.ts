@@ -6,7 +6,7 @@ export const createTicket = async (req: Request, res: Response) => {
     try {
         const { eventId } = req.params;
         const { name, description, price, quantityAvailable } = req.body;
-        const event = await Event.findByPk(eventId);
+        const event = await Event.findByPk(Number(eventId));
         if (!event) {
             return res.status(404).json({ error: 'Event not found' });
         }

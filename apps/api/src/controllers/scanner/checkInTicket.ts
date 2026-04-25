@@ -17,7 +17,7 @@ export const checkInTicket = async (req: Request, res: Response) => {
             return res.status(403).json({ error: 'Scanner not allowed for this event' });
         }
 
-        const event = await Event.findByPk(eventId);
+        const event = await Event.findByPk(Number(eventId));
         if (!event) return res.status(404).json({ error: 'Event not found' });
 
         const order = await Order.findOne({ where: { code } });
