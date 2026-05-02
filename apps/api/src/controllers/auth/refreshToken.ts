@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import User from "../../models/User";
-import { generateUserAccessToken, verifyUserRefreshToken } from "../../utils/jwt";
+import { generateUserAccessToken, generateUserRefreshToken, verifyUserRefreshToken } from "../../utils/jwt";
 
 export const refreshToken = async (req: Request, res: Response) => {
     try {
@@ -19,9 +19,13 @@ export const refreshToken = async (req: Request, res: Response) => {
         }
 
         const newAccessToken = generateUserAccessToken(user.id);
+        const newRefreshToken = generateUserRefreshToken(user.id);
+
+        await user.update({ refreshToken: newRefreshToken });
 
         res.json({
-            accessToken: newAccessToken
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
         });
     } catch (error) {
         console.error("Error refreshing token:", error);

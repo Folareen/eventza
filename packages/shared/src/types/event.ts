@@ -1,3 +1,5 @@
+import type { Ticket } from './ticket';
+
 export interface Event {
     id: number;
     title: string;
@@ -13,4 +15,5 @@ export interface Event {
     organizerId: number;
     createdAt: string;
     updatedAt: string;
+    tickets?: Ticket[];
 }

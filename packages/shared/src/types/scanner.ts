@@ -1,8 +1,8 @@
 export interface Scanner {
     id: number;
-    eventId: number;
-    name: string;
-    email: string;
+    username: string;
+    userId: number;
+    events?: { id: number; title: string }[];
     createdAt: string;
     updatedAt: string;
 }

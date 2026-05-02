@@ -4,7 +4,7 @@ import { Order } from '../../models';
 export const getOrder = async (req: Request, res: Response) => {
     try {
         const { orderId } = req.params;
-        const order = await Order.findByPk(orderId);
+        const order = await Order.findByPk(Number(orderId));
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
         }
