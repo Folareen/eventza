@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { RiCalendarLine, RiMapPinLine, RiTimeLine, RiUserLine, RiTicketLine } from 'react-icons/ri';
 import { Badge } from '@/components/ui/Badge';
+import { PurchaseTicketButton } from '@/components/events/PurchaseTicketButton';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api/v1';
 
@@ -58,15 +59,18 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                     <h2 className="text-base font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-2"><RiTicketLine className="h-4 w-4" /> Tickets</h2>
                     <div className="grid gap-3 sm:grid-cols-2">
                         {event.tickets.map((ticket: any) => (
-                            <div key={ticket.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 flex justify-between items-start gap-3">
-                                <div className="flex flex-col gap-0.5">
-                                    <span className="font-medium text-zinc-800 dark:text-zinc-100">{ticket.name}</span>
-                                    {ticket.description && <p className="text-xs text-zinc-500 dark:text-zinc-400">{ticket.description}</p>}
-                                    <span className="text-xs text-zinc-400">{ticket.quantityAvailable - (ticket.quantitySold ?? 0)} remaining</span>
+                            <div key={ticket.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 flex flex-col gap-3">
+                                <div className="flex justify-between items-start gap-3">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="font-medium text-zinc-800 dark:text-zinc-100">{ticket.name}</span>
+                                        {ticket.description && <p className="text-xs text-zinc-500 dark:text-zinc-400">{ticket.description}</p>}
+                                        <span className="text-xs text-zinc-400">{ticket.quantityAvailable - (ticket.quantitySold ?? 0)} remaining</span>
+                                    </div>
+                                    <span className="font-semibold text-zinc-900 dark:text-zinc-50 shrink-0">
+                                        {ticket.price === 0 ? 'Free' : `$${Number(ticket.price).toFixed(2)}`}
+                                    </span>
                                 </div>
-                                <span className="font-semibold text-zinc-900 dark:text-zinc-50 shrink-0">
-                                    {ticket.price === 0 ? 'Free' : `$${Number(ticket.price).toFixed(2)}`}
-                                </span>
+                                <PurchaseTicketButton eventId={event.id} ticket={ticket} />
                             </div>
                         ))}
                     </div>

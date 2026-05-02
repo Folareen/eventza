@@ -90,3 +90,77 @@ export const sendWelcomeEmail = async (email: string, otp: string, expiryMinutes
         `,
     });
 };
+
+export interface TicketEmailData {
+    to: string;
+    recipientName: string;
+    eventTitle: string;
+    eventDate: string;
+    eventVenue: string;
+    ticketName: string;
+    orderCode: string;
+    qrCodeBuffer: Buffer;
+}
+
+export const sendTicketEmail = async (data: TicketEmailData): Promise<void> => {
+    const { to, recipientName, eventTitle, eventDate, eventVenue, ticketName, orderCode, qrCodeBuffer } = data;
+
+    await transporter.sendMail({
+        to,
+        subject: `Your ticket for ${eventTitle}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; border-radius: 12px; overflow: hidden;">
+                <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 32px 24px; text-align: center;">
+                    <h1 style="color: #fff; margin: 0; font-size: 24px; letter-spacing: -0.5px;">eventza</h1>
+                    <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0; font-size: 14px;">Your ticket is confirmed</p>
+                </div>
+                <div style="padding: 32px 24px; background: #fff;">
+                    <p style="font-size: 16px; color: #374151; margin: 0 0 4px;">Hi ${recipientName},</p>
+                    <p style="font-size: 15px; color: #6b7280; margin: 0 0 24px;">Here is your ticket for <strong style="color: #111827;">${eventTitle}</strong>.</p>
+
+                    <div style="background: #f3f4f6; border-radius: 10px; padding: 20px; margin-bottom: 24px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 6px 0; font-size: 13px; color: #6b7280; width: 110px;">Event</td>
+                                <td style="padding: 6px 0; font-size: 13px; font-weight: 600; color: #111827;">${eventTitle}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; font-size: 13px; color: #6b7280;">Date</td>
+                                <td style="padding: 6px 0; font-size: 13px; font-weight: 600; color: #111827;">${eventDate}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; font-size: 13px; color: #6b7280;">Venue</td>
+                                <td style="padding: 6px 0; font-size: 13px; font-weight: 600; color: #111827;">${eventVenue}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 0; font-size: 13px; color: #6b7280;">Ticket</td>
+                                <td style="padding: 6px 0; font-size: 13px; font-weight: 600; color: #111827;">${ticketName}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <p style="font-size: 13px; color: #6b7280; margin: 0 0 16px;">Scan this QR code at the entrance</p>
+                        <img src="cid:ticket-qr@eventza" alt="Ticket QR Code" style="width: 200px; height: 200px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #fff;" />
+                    </div>
+
+                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; text-align: center;">
+                        <p style="font-size: 12px; color: #9ca3af; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1px;">Manual entry code</p>
+                        <p style="font-size: 18px; font-family: monospace; font-weight: 700; color: #111827; letter-spacing: 4px; margin: 0;">${orderCode}</p>
+                        <p style="font-size: 11px; color: #9ca3af; margin: 8px 0 0;">Show this code if the QR scan fails</p>
+                    </div>
+                </div>
+                <div style="padding: 16px 24px; text-align: center; background: #f9fafb; border-top: 1px solid #e5e7eb;">
+                    <p style="font-size: 12px; color: #9ca3af; margin: 0;">This ticket was issued by eventza. Do not share with others.</p>
+                </div>
+            </div>
+        `,
+        attachments: [
+            {
+                filename: `ticket-${orderCode}.png`,
+                content: qrCodeBuffer,
+                cid: 'ticket-qr@eventza',
+            },
+        ],
+    });
+};

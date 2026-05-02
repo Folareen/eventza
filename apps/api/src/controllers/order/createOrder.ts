@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import { Order, Ticket } from '../../models';
+import QRCode from 'qrcode';
+import { Order, Ticket, Event } from '../../models';
 import type { OrderStatus } from '../../models/Order';
 import { v4 as uuidv4 } from 'uuid';
+import { sendTicketEmail } from '../../services/email';
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
@@ -15,6 +17,8 @@ export const createOrder = async (req: Request, res: Response) => {
         if (ticket.quantityAvailable - ticket.quantitySold < quantity) {
             return res.status(400).json({ error: 'Not enough tickets available' });
         }
+
+        const event = await Event.findByPk(ticket.eventId);
 
         let orders: Order[] = [];
         let created = false;
@@ -44,6 +48,34 @@ export const createOrder = async (req: Request, res: Response) => {
 
         // do payment logic if ticket.price > 0
         await ticket.save();
+
+        if (event) {
+            const eventDate = new Date(event.date).toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            });
+
+            Promise.allSettled(
+                orders.map(async (order) => {
+                    const qrCodeBuffer = await QRCode.toBuffer(order.code, {
+                        type: 'png',
+                        width: 400,
+                        margin: 2,
+                        color: { dark: '#111827', light: '#ffffff' },
+                    });
+                    await sendTicketEmail({
+                        to: email,
+                        recipientName: name,
+                        eventTitle: event.title,
+                        eventDate,
+                        eventVenue: `${event.venue}, ${event.state}`,
+                        ticketName: ticket.name,
+                        orderCode: order.code,
+                        qrCodeBuffer,
+                    });
+                })
+            ).catch((err) => console.error('Ticket email error:', err));
+        }
+
         res.status(201).json({ orders });
     } catch (error) {
         console.log('Create order error:', error);
