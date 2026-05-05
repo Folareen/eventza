@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import QRCode from 'qrcode';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,6 +14,7 @@ import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { useCreateOrder } from '@/lib/queries/orders';
 import { useAuth } from '@/lib/auth-context';
+import type { Order } from '@/lib/types';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -74,7 +76,19 @@ export function PurchaseTicketButton({ eventId, ticket }: Props) {
     const [open, setOpen] = useState(false);
     const [step, setStep] = useState<'form' | 'payment' | 'done'>('form');
     const [clientSecret, setClientSecret] = useState<string | null>(null);
+    const [orders, setOrders] = useState<Order[]>([]);
     const { mutateAsync: createOrder } = useCreateOrder();
+
+    useEffect(() => {
+        if (step !== 'done' || orders.length === 0) return;
+        orders.forEach(async (order) => {
+            const dataUrl = await QRCode.toDataURL(order.code, { width: 400, margin: 2 });
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = `ticket-${order.code}.png`;
+            a.click();
+        });
+    }, [step]);
 
     const remaining = ticket.quantityAvailable - (ticket.quantitySold ?? 0);
 
@@ -93,6 +107,7 @@ export function PurchaseTicketButton({ eventId, ticket }: Props) {
     const onSubmit = async (data: FormData) => {
         try {
             const result = await createOrder({ eventId, ticketId: ticket.id, ...data });
+            setOrders(result.orders ?? []);
             if (result.clientSecret) {
                 setClientSecret(result.clientSecret);
                 setStep('payment');
@@ -110,6 +125,7 @@ export function PurchaseTicketButton({ eventId, ticket }: Props) {
         setTimeout(() => {
             setStep('form');
             setClientSecret(null);
+            setOrders([]);
             reset();
         }, 300);
     };

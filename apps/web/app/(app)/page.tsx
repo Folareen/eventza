@@ -133,7 +133,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 </div>
             </div>
 
-            {/* ── Browse by category ───────────────────────────────── */}
             {!filtered && (
                 <section className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
