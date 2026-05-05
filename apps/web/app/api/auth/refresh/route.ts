@@ -34,7 +34,6 @@ export async function POST(_req: NextRequest) {
 
     const { accessToken, refreshToken: newRefreshToken } = data;
 
-    // Fetch the user with the new token
     const userRes = await fetch(`${API}/users/me`, {
         headers: { Authorization: `Bearer ${accessToken}` },
     });

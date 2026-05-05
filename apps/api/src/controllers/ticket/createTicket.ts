@@ -7,7 +7,6 @@ export const createTicket = async (req: Request, res: Response) => {
         const { name, description, price, quantityAvailable } = req.body;
         const user = req.user!;
 
-        // Authorization check: user must own the event
         const event = await Event.findOne({
             where: { id: eventId, organizerId: user.id },
         });

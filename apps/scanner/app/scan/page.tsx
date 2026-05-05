@@ -72,7 +72,7 @@ export default function ScanPage() {
     const [mode, setMode] = useState<Mode>('camera');
     const [manualCode, setManualCode] = useState('');
     const [result, setResult] = useState<CheckInState | null>(null);
-    const [cameraKey, setCameraKey] = useState(0); // bump to remount camera after a scan
+    const [cameraKey, setCameraKey] = useState(0);
     const [cameraError, setCameraError] = useState<string | null>(null);
     const { mutateAsync: checkIn, isPending: checking } = useCheckIn(selectedEvent);
 

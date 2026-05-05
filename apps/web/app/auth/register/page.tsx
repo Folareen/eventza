@@ -41,7 +41,6 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen flex">
-            {/* Decorative left panel */}
             <div className="hidden lg:flex lg:w-[46%] bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 flex-col justify-between p-12 text-white relative overflow-hidden">
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 blur-3xl" />
@@ -58,7 +57,6 @@ export default function RegisterPage() {
                 <p className="relative text-sm text-indigo-300">© 2026 eventza</p>
             </div>
 
-            {/* Form panel */}
             <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white dark:bg-zinc-950">
                 <div className="w-full max-w-sm">
                     <Link href="/" className="lg:hidden flex items-center justify-center gap-2 mb-10">

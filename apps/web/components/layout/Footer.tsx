@@ -23,9 +23,7 @@ export function Footer() {
     return (
         <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-auto">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-8">
-                {/* Top grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
-                    {/* Brand */}
                     <div className="col-span-2 sm:col-span-1">
                         <Link href="/" className="inline-flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-3">
                             <RiCalendarEventLine className="h-5 w-5 text-indigo-600" />
@@ -52,7 +50,6 @@ export function Footer() {
                         </div>
                     </div>
 
-                    {/* Link columns */}
                     {Object.entries(LINKS).map(([title, links]) => (
                         <div key={title}>
                             <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-4">{title}</h3>
@@ -72,7 +69,6 @@ export function Footer() {
                     ))}
                 </div>
 
-                {/* Bottom bar */}
                 <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <p className="text-xs text-zinc-400 dark:text-zinc-500">© {new Date().getFullYear()} eventza. All rights reserved.</p>
                     <p className="text-xs text-zinc-400 dark:text-zinc-500">Made with ♥ for event creators everywhere.</p>

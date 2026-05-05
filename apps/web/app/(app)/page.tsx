@@ -81,9 +81,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     return (
         <main className="flex-1 flex flex-col">
 
-            {/* ── Hero ─────────────────────────────────────────────── */}
             <section className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white">
-                {/* Decorative blobs */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl" />
                     <div className="absolute top-1/2 left-1/3 w-64 h-64 rounded-full bg-violet-400/15 blur-3xl" />
@@ -120,7 +118,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 </div>
             </section>
 
-            {/* ── Stats bar ────────────────────────────────────────── */}
             <div className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800">
                     {[
@@ -159,7 +156,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 </section>
             )}
 
-            {/* ── Events section ───────────────────────────────────── */}
             <section id="events" className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-8 flex flex-col gap-6">
                 <div className="flex items-center justify-between">
                     <div>
@@ -215,7 +211,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 )}
             </section>
 
-            {/* ── Host CTA ─────────────────────────────────────────── */}
             <section className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 flex flex-col sm:flex-row items-center justify-between gap-8">
                     <div className="max-w-lg">

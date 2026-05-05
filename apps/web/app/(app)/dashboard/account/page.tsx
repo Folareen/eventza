@@ -85,7 +85,6 @@ export default function AccountPage() {
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage your profile and security settings</p>
             </div>
 
-            {/* Profile card */}
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
                 <div className="flex items-center gap-4 px-6 py-5 border-b border-zinc-100 dark:border-zinc-800">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white text-lg font-bold shrink-0 select-none">
@@ -123,7 +122,6 @@ export default function AccountPage() {
                 </div>
             </div>
 
-            {/* Email verification */}
             {!user.emailVerified && (
                 <div id="verify" className="rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-950/20 p-5 flex flex-col gap-4">
                     <div className="flex items-start gap-3">
@@ -164,7 +162,6 @@ export default function AccountPage() {
                 </div>
             )}
 
-            {/* Payouts section */}
             {user.emailVerified && (
                 <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                     <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
@@ -189,7 +186,6 @@ export default function AccountPage() {
                 </div>
             )}
 
-            {/* Danger zone */}
             <div className="rounded-xl border border-red-200 dark:border-red-900/40 bg-white dark:bg-zinc-900">
                 <div className="px-6 py-4 border-b border-red-100 dark:border-red-900/30">
                     <h2 className="text-sm font-semibold text-red-700 dark:text-red-400">Danger zone</h2>

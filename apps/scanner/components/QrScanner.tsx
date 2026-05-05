@@ -45,7 +45,7 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
                             scanner.stop().catch(() => { }).finally(() => onScan(decoded));
                         }
                     },
-                    () => { /* per-frame "no QR" — silence */ }
+                    () => { }
                 );
             } catch (err: any) {
                 if (!cancelled) {
@@ -65,7 +65,6 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
                 }
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

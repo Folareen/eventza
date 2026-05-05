@@ -28,21 +28,17 @@ export const verifyEmail = async (req: Request, res: Response) => {
             return res.status(400).json({ error: "Invalid or expired OTP" });
         }
 
-        // Attempt Stripe account creation
         let stripeAccount;
         try {
             stripeAccount = await onboardAccount({ email: user.email, name: `${user.firstName} ${user.lastName}` });
         } catch (stripeError) {
-            // Stripe account creation failed - rollback the OTP verification
             await transaction.rollback();
             console.error("Stripe account creation failed:", stripeError);
             return res.status(500).json({ error: "Failed to create payment account. Please try again." });
         }
 
-        // Stripe onboarding succeeded, mark email as verified and invalidate the OTP
         await user.update({ emailVerified: true, stripeAccountId: stripeAccount.id }, { transaction });
 
-        // Invalidate all OTPs for this user of this type to prevent replay attacks
         await invalidateOtps(user.id, OtpType.EMAIL_VERIFICATION);
 
         await transaction.commit();

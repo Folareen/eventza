@@ -133,7 +133,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                                 />
                                 <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
                                 <Tooltip
-                                    formatter={(v: number) => [`$${v.toFixed(2)}`, 'Revenue']}
+                                    formatter={(v) => [`$${Number(v).toFixed(2)}`, 'Revenue']}
                                     labelFormatter={(l) =>
                                         new Date(l + 'T00:00:00').toLocaleDateString('en-US', {
                                             month: 'long', day: 'numeric', year: 'numeric',
@@ -201,7 +201,7 @@ export default function AnalyticsPage({ params }: { params: Promise<{ id: string
                                                 <Cell key={entry.name} fill={entry.color} />
                                             ))}
                                         </Pie>
-                                        <Tooltip formatter={(v: number) => [v, 'Orders']} />
+                                        <Tooltip formatter={(v) => [v, 'Orders']} />
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>

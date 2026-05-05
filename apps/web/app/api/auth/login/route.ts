@@ -9,7 +9,6 @@ const COOKIE_OPTS = {
     path: '/',
 };
 
-/** Forwards auth responses: sets refresh_token as httpOnly cookie, returns { user, accessToken }. */
 async function forwardAuth(expressRes: Response): Promise<NextResponse> {
     const data = await expressRes.json();
     if (!expressRes.ok) return NextResponse.json(data, { status: expressRes.status });

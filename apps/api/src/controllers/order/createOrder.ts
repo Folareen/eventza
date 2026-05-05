@@ -18,7 +18,6 @@ export const createOrder = async (req: Request, res: Response) => {
             return res.status(404).json({ error: 'Ticket not found' });
         }
 
-        // Use transaction with row lock to prevent overselling
         transaction = await sequelize.transaction();
 
         const lockedTicket = await Ticket.findByPk(ticketId, {
@@ -58,8 +57,6 @@ export const createOrder = async (req: Request, res: Response) => {
             }
         }
 
-        // Only increment quantitySold immediately for free tickets.
-        // For paid tickets it is incremented by the webhook on payment_intent.succeeded.
         if (ticket.price === 0) {
             lockedTicket.quantitySold += quantity;
             await lockedTicket.save({ transaction });

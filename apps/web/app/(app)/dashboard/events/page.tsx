@@ -36,7 +36,6 @@ export default function MyEventsPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">My Events</h1>
@@ -49,7 +48,6 @@ export default function MyEventsPage() {
                 </Button>
             </div>
 
-            {/* Stats */}
             {!isLoading && events.length > 0 && (
                 <div className="grid grid-cols-3 gap-3">
                     {[
@@ -70,7 +68,6 @@ export default function MyEventsPage() {
                 </div>
             )}
 
-            {/* List */}
             {isLoading ? (
                 <div className="flex justify-center py-16">
                     <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-indigo-600" />
