@@ -24,10 +24,15 @@ async function forwardAuth(expressRes: Response): Promise<NextResponse> {
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
-    const res = await fetch(`${API}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
+    let res: Response;
+    try {
+        res = await fetch(`${API}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+    } catch {
+        return NextResponse.json({ error: 'Could not reach server, try again later' }, { status: 503 });
+    }
     return forwardAuth(res);
 }

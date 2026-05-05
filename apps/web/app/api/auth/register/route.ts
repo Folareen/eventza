@@ -11,11 +11,16 @@ const COOKIE_OPTS = {
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
-    const res = await fetch(`${API}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
+    let res: Response;
+    try {
+        res = await fetch(`${API}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+    } catch {
+        return NextResponse.json({ error: 'Could not reach server, try again later' }, { status: 503 });
+    }
     const data = await res.json();
     if (!res.ok) return NextResponse.json(data, { status: res.status });
 

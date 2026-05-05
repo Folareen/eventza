@@ -18,11 +18,16 @@ export async function POST(_req: NextRequest) {
         return NextResponse.json({ error: 'No session' }, { status: 401 });
     }
 
-    const res = await fetch(`${API}/auth/refresh-token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
-    });
+    let res: Response;
+    try {
+        res = await fetch(`${API}/auth/refresh-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+        });
+    } catch {
+        return NextResponse.json({ error: 'Could not reach server, try again later' }, { status: 503 });
+    }
 
     const data = await res.json();
 
