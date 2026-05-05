@@ -15,7 +15,7 @@ import { stripeWebhook } from './src/controllers/order/stripeWebhook';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
 app.post('/api/v1/webhooks/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

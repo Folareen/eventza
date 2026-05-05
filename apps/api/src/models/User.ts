@@ -12,43 +12,45 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare stripeAccountId: CreationOptional<string | null>;
 }
 
-User.init({
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    firstName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    refreshToken: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    emailVerified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
-    stripeAccountId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        unique: true
-    },
-}, {
+User.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        firstName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        lastName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        refreshToken: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
+        emailVerified: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        stripeAccountId: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: true
+        },
+
+    }, {
     tableName: 'users',
     sequelize,
     indexes: [

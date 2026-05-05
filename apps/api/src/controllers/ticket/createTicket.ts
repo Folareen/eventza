@@ -5,9 +5,15 @@ export const createTicket = async (req: Request, res: Response) => {
     try {
         const { eventId } = req.params;
         const { name, description, price, quantityAvailable } = req.body;
-        const event = await Event.findByPk(Number(eventId));
+        const user = req.user!;
+
+        // Authorization check: user must own the event
+        const event = await Event.findOne({
+            where: { id: eventId, organizerId: user.id },
+        });
+
         if (!event) {
-            return res.status(404).json({ error: 'Event not found' });
+            return res.status(403).json({ error: 'Not authorized to create tickets for this event' });
         }
         const ticket = Ticket.build({
             eventId: Number(eventId),

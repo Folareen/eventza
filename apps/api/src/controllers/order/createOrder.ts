@@ -5,8 +5,10 @@ import type { OrderStatus } from '../../models/Order';
 import { v4 as uuidv4 } from 'uuid';
 import { sendTicketEmail } from '../../services/email';
 import { createPaymentIntent } from '../../services/stripe';
+import sequelize from '../../config/database';
 
 export const createOrder = async (req: Request, res: Response) => {
+    let transaction: any;
     try {
         const { name, email, quantity } = req.body;
         const ticketId = Number(req.params.ticketId);
@@ -15,7 +17,17 @@ export const createOrder = async (req: Request, res: Response) => {
         if (!ticket) {
             return res.status(404).json({ error: 'Ticket not found' });
         }
-        if (ticket.quantityAvailable - ticket.quantitySold < quantity) {
+
+        // Use transaction with row lock to prevent overselling
+        transaction = await sequelize.transaction();
+
+        const lockedTicket = await Ticket.findByPk(ticketId, {
+            transaction,
+            lock: transaction.LOCK.UPDATE,
+        });
+
+        if (!lockedTicket || lockedTicket.quantityAvailable - lockedTicket.quantitySold < quantity) {
+            await transaction.rollback();
             return res.status(400).json({ error: 'Not enough tickets available' });
         }
 
@@ -35,7 +47,7 @@ export const createOrder = async (req: Request, res: Response) => {
                 updatedAt: new Date(),
             }));
             try {
-                orders = await Order.bulkCreate(orderData, { validate: true });
+                orders = await Order.bulkCreate(orderData, { validate: true, transaction });
                 created = true;
             } catch (err: any) {
                 if (err.name === 'SequelizeUniqueConstraintError') {
@@ -49,9 +61,12 @@ export const createOrder = async (req: Request, res: Response) => {
         // Only increment quantitySold immediately for free tickets.
         // For paid tickets it is incremented by the webhook on payment_intent.succeeded.
         if (ticket.price === 0) {
-            ticket.quantitySold += quantity;
-            await ticket.save();
+            lockedTicket.quantitySold += quantity;
+            await lockedTicket.save({ transaction });
         }
+
+        await transaction.commit();
+        transaction = null;
 
         if (ticket.price === 0) {
             if (event) {
@@ -107,6 +122,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
         res.status(201).json({ clientSecret: paymentIntent.client_secret, orders });
     } catch (error) {
+        if (transaction) await transaction.rollback().catch(() => { });
         res.status(500).json({ error: 'Failed to create order' });
     }
 };

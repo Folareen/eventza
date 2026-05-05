@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import QRCode from 'qrcode';
 import stripeClient from '../../config/stripe';
-import { Order, Ticket, Event } from '../../models';
+import { Order, Ticket, Event, WebhookEvent } from '../../models';
 import { sendTicketEmail } from '../../services/email';
 
 export const stripeWebhook = async (req: Request, res: Response) => {
@@ -17,6 +17,33 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         );
     } catch (err: any) {
         return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+    }
+
+    // Check if this webhook event has already been processed (idempotency)
+    try {
+        const existingWebhookEvent = await WebhookEvent.findOne({
+            where: { stripeEventId: event.id },
+        });
+
+        if (existingWebhookEvent) {
+            // Already processed, return success without re-processing
+            return res.json({ received: true, duplicate: true });
+        }
+    } catch (err) {
+        console.error('Error checking webhook idempotency:', err);
+        // Continue anyway but log the error
+    }
+
+    // Track this webhook event as processed
+    try {
+        await WebhookEvent.create({
+            stripeEventId: event.id,
+            type: event.type,
+            processed: true,
+        });
+    } catch (err) {
+        console.error('Error tracking webhook event:', err);
+        // Continue anyway
     }
 
     if (event.type === 'payment_intent.succeeded') {
