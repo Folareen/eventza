@@ -15,7 +15,7 @@ export function UnverifiedBanner() {
             <span className="font-medium">Your email is not verified. Some features are restricted until you verify.</span>
             <Link
                 href="/dashboard/account#verify"
-                className="ml-1 inline-flex items-center gap-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors px-3 py-0.5 text-xs font-semibold whitespace-nowrap"
+                className="ml-1 inline-flex items-center gap-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors px-3 py-0.5 text-xs font-semibold whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-amber-500 dark:focus:ring-offset-amber-600"
             >
                 Verify now <RiArrowRightLine className="h-3 w-3" />
             </Link>

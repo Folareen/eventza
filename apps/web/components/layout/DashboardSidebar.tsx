@@ -40,6 +40,7 @@ export function DashboardSidebar() {
 
     const activeClass = 'bg-indigo-50 text-indigo-700 font-semibold dark:bg-indigo-950/40 dark:text-indigo-400';
     const inactiveClass = 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-200';
+    const focusClass = 'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-950';
 
     return (
         <aside className="w-56 shrink-0 hidden md:block">
@@ -51,7 +52,7 @@ export function DashboardSidebar() {
                     <Link
                         key={href}
                         href={href}
-                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${isActive(href, exact) ? activeClass : inactiveClass}`}
+                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${focusClass} ${isActive(href, exact) ? activeClass : inactiveClass}`}
                     >
                         <Icon className="h-4 w-4 shrink-0" />
                         {label}
@@ -65,7 +66,7 @@ export function DashboardSidebar() {
                     <Link
                         key={href}
                         href={href}
-                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${isActive(href, true) ? activeClass : inactiveClass}`}
+                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${focusClass} ${isActive(href, true) ? activeClass : inactiveClass}`}
                     >
                         <Icon className="h-4 w-4 shrink-0" />
                         {label}
@@ -81,7 +82,7 @@ export function DashboardSidebar() {
                             <Link
                                 key={href}
                                 href={href}
-                                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${isActive(href, exact) ? activeClass : inactiveClass}`}
+                                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${focusClass} ${isActive(href, exact) ? activeClass : inactiveClass}`}
                             >
                                 <RiCalendarEventLine className="h-4 w-4 shrink-0" />
                                 {label}

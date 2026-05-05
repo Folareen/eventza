@@ -10,10 +10,10 @@ interface ModalProps {
     onClose: () => void;
     title?: string;
     children: React.ReactNode;
-    maxWidth?: 'sm' | 'md' | 'lg';
+    maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
-const maxWidthClasses = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg' };
+const maxWidthClasses = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-xl' };
 
 export function Modal({ open, onClose, title, children, maxWidth = 'md' }: ModalProps) {
     const overlayRef = useRef<HTMLDivElement>(null);
@@ -37,16 +37,16 @@ export function Modal({ open, onClose, title, children, maxWidth = 'md' }: Modal
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
             onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
         >
-            <div className={`w-full ${maxWidthClasses[maxWidth]} bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-xl`}>
+            <div className={`w-full ${maxWidthClasses[maxWidth]} bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-xl max-h-[90vh] flex flex-col`}>
                 {title && (
-                    <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-5 py-4">
+                    <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-5 py-4 shrink-0">
                         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">{title}</h2>
                         <Button variant="ghost" size="icon" onClick={onClose}>
                             <HiXMark className="h-4 w-4" />
                         </Button>
                     </div>
                 )}
-                <div className="p-5">{children}</div>
+                <div className="p-5 overflow-y-auto">{children}</div>
             </div>
         </div>,
         document.body,
