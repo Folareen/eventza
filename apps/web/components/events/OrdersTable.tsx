@@ -16,7 +16,7 @@ const statusVariant: Record<OrderStatus, 'success' | 'warning' | 'danger'> = {
 };
 
 function formatDate(str: string) {
-    return new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return new Date(str).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
 }
 
 export function OrdersTable({ orders, ticketNames }: OrdersTableProps) {
