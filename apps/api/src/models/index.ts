@@ -4,7 +4,6 @@ import User from './User';
 import Ticket from './Ticket';
 import Order from './Order';
 import Scanner from './Scanner';
-import WebhookEvent from './WebhookEvent';
 
 User.hasMany(Otp, {
     foreignKey: 'userId',
@@ -64,5 +63,5 @@ Event.belongsToMany(Scanner, {
     as: 'scanners'
 });
 
-export { Event, Otp, User, Ticket, Order, Scanner, WebhookEvent };
+export { Event, Otp, User, Ticket, Order, Scanner };
 
