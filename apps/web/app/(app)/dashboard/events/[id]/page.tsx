@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import Link from 'next/link';
-import { RiCalendarLine, RiMapPinLine, RiTimeLine, RiUserLine, RiPencilLine, RiTicketLine } from 'react-icons/ri';
+import { RiCalendarLine, RiMapPinLine, RiTimeLine, RiUserLine, RiPencilLine, RiTicketLine, RiBarChartLine } from 'react-icons/ri';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
@@ -54,8 +54,9 @@ export default function EventOverviewPage({ params }: { params: Promise<{ id: st
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap">{event.description}</p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {[
+                    { label: 'Analytics', href: `/dashboard/events/${id}/analytics`, icon: RiBarChartLine },
                     { label: 'Tickets', href: `/dashboard/events/${id}/tickets`, icon: RiTicketLine },
                     { label: 'Orders', href: `/dashboard/events/${id}/orders`, icon: RiUserLine },
                     { label: 'Scanners', href: `/dashboard/events/${id}/scanners`, icon: RiUserLine },

@@ -15,6 +15,7 @@ export default function NewEventPage() {
             toast.success('Event created successfully');
             router.push(`/dashboard/events/${result.event.id}`);
         } catch (err: any) {
+            console.error('Error creating event:', err);
             toast.error(err?.message ?? 'Failed to create event');
         }
     };

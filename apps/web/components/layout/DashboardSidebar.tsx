@@ -6,10 +6,8 @@ import {
     RiCalendarEventLine,
     RiAddLine,
     RiListCheck,
-    RiLineChartLine,
-    RiMoneyDollarCircleLine,
+    RiBarChartLine,
     RiUserLine,
-    RiShieldCheckLine,
 } from 'react-icons/ri';
 
 export function DashboardSidebar() {
@@ -22,14 +20,6 @@ export function DashboardSidebar() {
         { href: '/dashboard/events/new', label: 'Create Event', icon: RiAddLine },
     ];
 
-    const analyticsLinks = [
-        { label: 'Analytics', icon: RiLineChartLine },
-    ];
-
-    const paymentsLinks = [
-        { label: 'Payments', icon: RiMoneyDollarCircleLine },
-    ];
-
     const accountLinks = [
         { href: '/dashboard/account', label: 'Profile', icon: RiUserLine },
     ];
@@ -37,6 +27,7 @@ export function DashboardSidebar() {
     const eventLinks = eventId
         ? [
             { href: `/dashboard/events/${eventId}`, label: 'Overview', exact: true },
+            { href: `/dashboard/events/${eventId}/analytics`, label: 'Analytics', icon: RiBarChartLine },
             { href: `/dashboard/events/${eventId}/edit`, label: 'Edit Event' },
             { href: `/dashboard/events/${eventId}/tickets`, label: 'Tickets' },
             { href: `/dashboard/events/${eventId}/orders`, label: 'Orders' },
@@ -65,38 +56,6 @@ export function DashboardSidebar() {
                         <Icon className="h-4 w-4 shrink-0" />
                         {label}
                     </Link>
-                ))}
-
-                <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                    Insights
-                </p>
-                {analyticsLinks.map(({ label, icon: Icon }) => (
-                    <div
-                        key={label}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-400 dark:text-zinc-600 cursor-not-allowed select-none"
-                    >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="flex-1">{label}</span>
-                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-500 rounded-full px-1.5 py-0.5 leading-none">
-                            Soon
-                        </span>
-                    </div>
-                ))}
-
-                <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                    Earnings
-                </p>
-                {paymentsLinks.map(({ label, icon: Icon }) => (
-                    <div
-                        key={label}
-                        className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-400 dark:text-zinc-600 cursor-not-allowed select-none"
-                    >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="flex-1">{label}</span>
-                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-500 rounded-full px-1.5 py-0.5 leading-none">
-                            Soon
-                        </span>
-                    </div>
                 ))}
 
                 <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
@@ -134,5 +93,3 @@ export function DashboardSidebar() {
         </aside>
     );
 }
-
-

@@ -37,7 +37,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
         res.json({ message: "Email verified successfully" });
     } catch (error) {
         console.error("Error verifying email:", error);
-        await transaction.rollback();
+        if (transaction) await transaction.rollback().catch(() => { });
         res.status(500).json({ error: "Email verification failed" });
     }
 };

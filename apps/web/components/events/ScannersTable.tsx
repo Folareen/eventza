@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RiEditLine, RiDeleteBinLine } from 'react-icons/ri';
+import { HiOutlinePencil, HiTrash } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
@@ -71,11 +71,11 @@ export function ScannersTable({ scanners, userEvents, onUpdate, onDelete, updati
                                 </td>
                                 <td className="px-4 py-3">
                                     <div className="flex gap-1">
-                                        <Button variant="ghost" size="sm" onClick={() => openEdit(scanner)} className="h-8 w-8 p-0">
-                                            <RiEditLine className="h-4 w-4" />
+                                        <Button variant="ghost" size="icon" onClick={() => openEdit(scanner)}>
+                                            <HiOutlinePencil className="h-4 w-4" />
                                         </Button>
-                                        <Button variant="ghost" size="sm" loading={updating === scanner.id} onClick={() => onDelete(scanner.id)} className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-                                            <RiDeleteBinLine className="h-4 w-4" />
+                                        <Button variant="danger-ghost" size="icon" loading={updating === scanner.id} onClick={() => onDelete(scanner.id)}>
+                                            <HiTrash className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </td>

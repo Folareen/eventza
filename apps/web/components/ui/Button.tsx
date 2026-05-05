@@ -2,8 +2,8 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { Spinner } from './Spinner';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
-type Size = 'sm' | 'md' | 'lg';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-ghost';
+type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: Variant;
@@ -21,12 +21,15 @@ const variantClasses: Record<Variant, string> = {
         'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 disabled:opacity-50',
     danger:
         'bg-red-600 text-white hover:bg-red-700 disabled:opacity-50',
+    'danger-ghost':
+        'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 disabled:opacity-50',
 };
 
 const sizeClasses: Record<Size, string> = {
     sm: 'h-8 px-3.5 text-sm',
     md: 'h-10 px-4 text-sm',
     lg: 'h-11 px-5 text-base',
+    icon: 'h-9 w-9 p-0 text-sm',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

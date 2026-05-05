@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Ticket, Event } from '../../models';
-// import { createTicketOnStripe } from '../../services/stripe';
 
 export const createTicket = async (req: Request, res: Response) => {
     try {
@@ -18,9 +17,7 @@ export const createTicket = async (req: Request, res: Response) => {
             quantityAvailable,
         });
 
-        // const stripeProduct = await createTicketOnStripe()
-
-        await ticket.save()
+        await ticket.save();
 
         res.status(201).json({ ticket });
     } catch (error) {

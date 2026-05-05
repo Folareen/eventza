@@ -1,6 +1,6 @@
 'use client';
 
-import { RiEditLine, RiDeleteBinLine } from 'react-icons/ri';
+import { HiOutlinePencil, HiTrash } from 'react-icons/hi2';
 import { Button } from '../ui/Button';
 import type { Ticket } from '@/lib/types';
 
@@ -29,11 +29,11 @@ export function TicketCard({ ticket, onEdit, onDelete }: TicketCardProps) {
                     </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                    <Button variant="ghost" size="sm" onClick={() => onEdit(ticket)} className="h-8 w-8 p-0">
-                        <RiEditLine className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" onClick={() => onEdit(ticket)}>
+                        <HiOutlinePencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => onDelete(ticket)} className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
-                        <RiDeleteBinLine className="h-4 w-4" />
+                    <Button variant="danger-ghost" size="icon" onClick={() => onDelete(ticket)}>
+                        <HiTrash className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

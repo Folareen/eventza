@@ -11,10 +11,12 @@ import authRoutes from './src/routes/auth';
 import eventRoutes from './src/routes/event';
 import scannerRoutes from './src/routes/scanner';
 import userRoutes from './src/routes/user';
+import { stripeWebhook } from './src/controllers/order/stripeWebhook';
 
 const app = express();
 
 app.use(cors());
+app.post('/api/v1/webhooks/stripe', express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

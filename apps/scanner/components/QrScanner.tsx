@@ -11,10 +11,12 @@ interface QrScannerProps {
 export function QrScanner({ onScan, onError }: QrScannerProps) {
     const instanceRef = useRef<any>(null);
     const firedRef = useRef(false);
+    const stoppingRef = useRef(false);
     const containerId = 'qr-scanner-viewport';
 
     useEffect(() => {
         firedRef.current = false;
+        stoppingRef.current = false;
 
         let cancelled = false;
 
@@ -37,8 +39,9 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
                         aspectRatio: 1,
                     },
                     (decoded: string) => {
-                        if (!firedRef.current) {
+                        if (!firedRef.current && !stoppingRef.current) {
                             firedRef.current = true;
+                            stoppingRef.current = true;
                             scanner.stop().catch(() => { }).finally(() => onScan(decoded));
                         }
                     },
@@ -53,10 +56,13 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
 
         return () => {
             cancelled = true;
-            const inst = instanceRef.current;
-            if (inst) {
-                inst.stop().catch(() => { });
-                instanceRef.current = null;
+            if (!stoppingRef.current) {
+                stoppingRef.current = true;
+                const inst = instanceRef.current;
+                if (inst) {
+                    inst.stop().catch(() => { });
+                    instanceRef.current = null;
+                }
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

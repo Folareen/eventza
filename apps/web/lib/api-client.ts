@@ -16,7 +16,12 @@ async function refreshSession(): Promise<string | null> {
 
 export class ApiError extends Error {
     constructor(public status: number, public data: Record<string, unknown>) {
-        super((data.error as string) ?? 'Request failed');
+        const base = (data.error as string) ?? 'Request failed';
+        const details = data.details as Array<{ field: string; message: string }> | undefined;
+        const message = details?.length
+            ? `${base}: ${details.map((d) => `${d.field ? d.field + ' — ' : ''}${d.message}`).join(', ')}`
+            : base;
+        super(message);
     }
 }
 

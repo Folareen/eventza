@@ -9,6 +9,7 @@ import {
     RiCalendarEventLine,
     RiTimeLine,
     RiCheckboxCircleLine,
+    RiBarChartLine,
 } from 'react-icons/ri';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -90,29 +91,39 @@ export default function MyEventsPage() {
                     {events.map((event) => {
                         const status = getEventStatus(event);
                         return (
-                            <Link
+                            <div
                                 key={event.id}
-                                href={`/dashboard/events/${event.id}`}
                                 className="flex items-center gap-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3.5 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm transition-all group"
                             >
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/30">
-                                    <RiCalendarEventLine className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                                </div>
-                                <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-                                    <span className="font-medium text-zinc-900 dark:text-zinc-50 truncate">{event.title}</span>
-                                    <div className="flex items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
-                                        <span className="flex items-center gap-1"><RiCalendarLine className="h-3 w-3" />{formatDate(event.date)}</span>
-                                        <span className="hidden sm:flex items-center gap-1 truncate"><RiMapPinLine className="h-3 w-3 shrink-0" />{event.venue}</span>
+                                <Link href={`/dashboard/events/${event.id}`} className="flex items-center gap-4 flex-1 min-w-0">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/30">
+                                        <RiCalendarEventLine className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                                     </div>
-                                </div>
+                                    <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                                        <span className="font-medium text-zinc-900 dark:text-zinc-50 truncate">{event.title}</span>
+                                        <div className="flex items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+                                            <span className="flex items-center gap-1"><RiCalendarLine className="h-3 w-3" />{formatDate(event.date)}</span>
+                                            <span className="hidden sm:flex items-center gap-1 truncate"><RiMapPinLine className="h-3 w-3 shrink-0" />{event.venue}</span>
+                                        </div>
+                                    </div>
+                                </Link>
                                 <div className="flex items-center gap-2.5 shrink-0">
                                     <span className={`hidden sm:inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${status.color}`}>
                                         {status.label}
                                     </span>
                                     <Badge>{event.category}</Badge>
-                                    <RiArrowRightSLine className="h-4 w-4 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" />
+                                    <Link
+                                        href={`/dashboard/events/${event.id}/analytics`}
+                                        className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors px-2 py-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/30"
+                                        title="Analytics"
+                                    >
+                                        <RiBarChartLine className="h-3.5 w-3.5" /> Analytics
+                                    </Link>
+                                    <Link href={`/dashboard/events/${event.id}`}>
+                                        <RiArrowRightSLine className="h-4 w-4 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" />
+                                    </Link>
                                 </div>
-                            </Link>
+                            </div>
                         );
                     })}
                 </div>

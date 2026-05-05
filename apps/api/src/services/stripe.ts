@@ -1,42 +1,77 @@
 import stripe from "../config/stripe";
 
 export const onboardAccount = async ({ email, name }: { email: string, name: string }) => {
-    try {
-        const account = await stripe.v2.core.accounts.create({
-            display_name: name,
-            contact_email: email,
-            dashboard: "express",
-            defaults: {
-                responsibilities: {
-                    fees_collector: "application",
-                    losses_collector: "application",
-                },
+    const account = await stripe.v2.core.accounts.create({
+        display_name: name,
+        contact_email: email,
+        dashboard: "express",
+        defaults: {
+            responsibilities: {
+                fees_collector: "application",
+                losses_collector: "application",
             },
-            identity: {
-                country: 'US',
-                business_details: {
-                    registered_name: name
-                }
+        },
+        identity: {
+            country: 'US',
+            business_details: {
+                registered_name: name,
             },
-            configuration: {
-                recipient: {
-                    capabilities: {
-                        stripe_balance: {
-                            stripe_transfers: {
-                                requested: true,
-                            },
+        },
+        configuration: {
+            recipient: {
+                capabilities: {
+                    stripe_balance: {
+                        stripe_transfers: {
+                            requested: true,
                         },
                     },
                 },
             },
-        });
+        },
+    });
 
-        return account;
-    } catch (error) {
-        console.error("Error creating Stripe Connect account:", error);
-        throw error;
-    }
-}
+    return account;
+};
+
+export const createAccountLink = async (accountId: string, returnUrl: string, refreshUrl: string) => {
+    const link = await stripe.accountLinks.create({
+        account: accountId,
+        type: 'account_onboarding',
+        return_url: returnUrl,
+        refresh_url: refreshUrl,
+    });
+    return link;
+};
+
+export const createLoginLink = async (accountId: string) => {
+    const link = await stripe.accounts.createLoginLink(accountId);
+    return link;
+};
+
+export const createPaymentIntent = async ({
+    amount,
+    currency,
+    applicationFeeAmount,
+    destinationAccountId,
+    metadata,
+}: {
+    amount: number;
+    currency: string;
+    applicationFeeAmount: number;
+    destinationAccountId: string;
+    metadata: Record<string, string>;
+}) => {
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency,
+        application_fee_amount: applicationFeeAmount,
+        transfer_data: {
+            destination: destinationAccountId,
+        },
+        metadata,
+    });
+    return paymentIntent;
+};
 
 // export const createStripeProduct = async ({ name, description, price, accountId }: { name: string, desc }) => {
 //     const productName = ticketName,

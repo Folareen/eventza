@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { RiCloseLine } from 'react-icons/ri';
+import { HiXMark } from 'react-icons/hi2';
 import { Button } from './Button';
 
 interface ModalProps {
@@ -41,8 +41,8 @@ export function Modal({ open, onClose, title, children, maxWidth = 'md' }: Modal
                 {title && (
                     <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 px-5 py-4">
                         <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">{title}</h2>
-                        <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
-                            <RiCloseLine className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" onClick={onClose}>
+                            <HiXMark className="h-4 w-4" />
                         </Button>
                     </div>
                 )}

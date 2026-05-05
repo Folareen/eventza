@@ -27,3 +27,23 @@ export function useVerifyEmail() {
         onSuccess: () => qc.invalidateQueries({ queryKey: userKeys.me }),
     });
 }
+
+export function useStripeStatus() {
+    return useQuery({
+        queryKey: ['user', 'stripe', 'status'],
+        queryFn: () => api.get<{ detailsSubmitted: boolean }>('/users/me/stripe/status'),
+        staleTime: 0,
+    });
+}
+
+export function useStripeOnboardingLink() {
+    return useMutation({
+        mutationFn: () => api.get<{ url: string }>('/users/me/stripe/onboarding'),
+    });
+}
+
+export function useStripeDashboardLink() {
+    return useMutation({
+        mutationFn: () => api.get<{ url: string }>('/users/me/stripe/dashboard'),
+    });
+}

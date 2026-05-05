@@ -30,7 +30,7 @@ export function TicketForm({ initialData, onSubmit, onCancel, loading }: TicketF
         defaultValues: {
             name: initialData?.name ?? '',
             description: initialData?.description ?? '',
-            price: initialData?.price ?? 0,
+            price: initialData ? Number(initialData.price) : 0,
             quantityAvailable: initialData?.quantityAvailable ?? undefined,
         },
     });

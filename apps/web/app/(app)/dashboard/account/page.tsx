@@ -5,24 +5,34 @@ import toast from 'react-hot-toast';
 import {
     RiCheckLine,
     RiMailLine,
-    RiUserLine,
     RiShieldCheckLine,
     RiLockPasswordLine,
     RiArrowRightLine,
+    RiBankCardLine,
+    RiExternalLinkLine,
 } from 'react-icons/ri';
 import Link from 'next/link';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAuth } from '@/lib/auth-context';
-import { useRequestEmailVerification, useVerifyEmail } from '@/lib/queries/user';
+import {
+    useRequestEmailVerification,
+    useVerifyEmail,
+    useStripeStatus,
+    useStripeOnboardingLink,
+    useStripeDashboardLink,
+} from '@/lib/queries/user';
 
 export default function AccountPage() {
     const { user } = useAuth();
     const { mutateAsync: requestVerification, isPending: requesting } = useRequestEmailVerification();
     const { mutateAsync: verifyEmail, isPending: verifying } = useVerifyEmail();
+    const { data: stripeStatus } = useStripeStatus();
+    const { mutateAsync: getOnboardingLink, isPending: loadingOnboarding } = useStripeOnboardingLink();
+    const { mutateAsync: getDashboardLink, isPending: loadingDashboard } = useStripeDashboardLink();
     const [otp, setOtp] = useState('');
-    const [showOtpInput, setShowOtpInput] = useState(false);
+    const [resent, setResent] = useState(false);
 
     if (!user) return <div className="flex justify-center py-16"><Spinner size="lg" /></div>;
 
@@ -30,7 +40,7 @@ export default function AccountPage() {
         try {
             await requestVerification();
             toast.success('Verification email sent');
-            setShowOtpInput(true);
+            setResent(true);
         } catch (err: any) {
             toast.error(err?.message ?? 'Failed to send verification email');
         }
@@ -42,10 +52,27 @@ export default function AccountPage() {
         try {
             await verifyEmail(otp);
             toast.success('Email verified successfully');
-            setShowOtpInput(false);
             setOtp('');
         } catch (err: any) {
             toast.error(err?.message ?? 'Verification failed');
+        }
+    };
+
+    const handleOnboarding = async () => {
+        try {
+            const { url } = await getOnboardingLink();
+            window.location.href = url;
+        } catch (err: any) {
+            toast.error(err?.message ?? 'Failed to open onboarding');
+        }
+    };
+
+    const handleDashboard = async () => {
+        try {
+            const { url } = await getDashboardLink();
+            window.open(url, '_blank');
+        } catch (err: any) {
+            toast.error(err?.message ?? 'Failed to open dashboard');
         }
     };
 
@@ -96,62 +123,71 @@ export default function AccountPage() {
                 </div>
             </div>
 
-            {/* Email verification banner */}
+            {/* Email verification */}
             {!user.emailVerified && (
-                <div className="rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-950/20 p-5 flex flex-col gap-3">
+                <div id="verify" className="rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-950/20 p-5 flex flex-col gap-4">
                     <div className="flex items-start gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/40">
                             <RiMailLine className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Verify your email</p>
-                            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">Verify your email address to unlock all features and secure your account.</p>
+                            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                                A verification code was sent to <span className="font-medium">{user.email}</span> when you registered. Enter it below.
+                            </p>
                         </div>
                     </div>
-                    {!showOtpInput ? (
-                        <Button size="sm" variant="secondary" onClick={handleRequestVerification} loading={requesting} className="self-start">
-                            Send verification email
-                        </Button>
-                    ) : (
-                        <form onSubmit={handleVerify} className="flex gap-2">
+                    <form onSubmit={handleVerify} className="flex flex-col gap-3">
+                        <div className="flex gap-2 items-start">
                             <Input
                                 placeholder="6-digit code"
                                 inputMode="numeric"
                                 maxLength={6}
                                 value={otp}
                                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                                className="flex-1 max-w-[160px]"
+                                className="max-w-[160px]"
                             />
                             <Button type="submit" size="sm" loading={verifying}>Verify</Button>
-                        </form>
-                    )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-amber-700 dark:text-amber-400">Didn't get it?</span>
+                            <button
+                                type="button"
+                                onClick={handleRequestVerification}
+                                disabled={requesting}
+                                className="text-xs font-medium text-amber-800 dark:text-amber-300 underline underline-offset-2 hover:no-underline disabled:opacity-50"
+                            >
+                                {requesting ? 'Sending…' : resent ? 'Resend again' : 'Resend code'}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             )}
 
-            {/* Security section */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
-                    <RiShieldCheckLine className="h-4 w-4 text-zinc-500" />
-                    <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Security</h2>
-                </div>
-                <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                    <Link
-                        href="/auth/forgot-password"
-                        className="flex items-center justify-between px-6 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800">
-                                <RiLockPasswordLine className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200">Change password</p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400">Update your account password</p>
-                            </div>
+            {/* Payouts section */}
+            {user.emailVerified && (
+                <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                    <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+                        <RiBankCardLine className="h-4 w-4 text-zinc-500" />
+                        <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Payouts</h2>
+                    </div>
+                    <div className="px-6 py-5 flex flex-col gap-4">
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            Complete your Stripe onboarding to receive payouts from ticket sales. Once set up, access your dashboard to manage withdrawals to your bank.
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {!stripeStatus?.detailsSubmitted && (
+                                <Button size="sm" variant="secondary" onClick={handleOnboarding} loading={loadingOnboarding}>
+                                    Complete onboarding
+                                </Button>
+                            )}
+                            <Button size="sm" variant="ghost" onClick={handleDashboard} loading={loadingDashboard} className="flex items-center gap-1.5">
+                                Stripe dashboard <RiExternalLinkLine className="h-3.5 w-3.5" />
+                            </Button>
                         </div>
-                        <RiArrowRightLine className="h-4 w-4 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" />
-                    </Link>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Danger zone */}
             <div className="rounded-xl border border-red-200 dark:border-red-900/40 bg-white dark:bg-zinc-900">
@@ -169,5 +205,4 @@ export default function AccountPage() {
         </div>
     );
 }
-
 
