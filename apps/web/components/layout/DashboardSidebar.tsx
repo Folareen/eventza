@@ -59,20 +59,6 @@ export function DashboardSidebar() {
                     </Link>
                 ))}
 
-                <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                    Account
-                </p>
-                {accountLinks.map(({ href, label, icon: Icon }) => (
-                    <Link
-                        key={href}
-                        href={href}
-                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${focusClass} ${isActive(href, true) ? activeClass : inactiveClass}`}
-                    >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        {label}
-                    </Link>
-                ))}
-
                 {eventLinks.length > 0 && (
                     <>
                         <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
@@ -90,6 +76,20 @@ export function DashboardSidebar() {
                         ))}
                     </>
                 )}
+
+                <p className="mt-4 mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                    Account
+                </p>
+                {accountLinks.map(({ href, label, icon: Icon }) => (
+                    <Link
+                        key={href}
+                        href={href}
+                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${focusClass} ${isActive(href, true) ? activeClass : inactiveClass}`}
+                    >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        {label}
+                    </Link>
+                ))}
             </nav>
         </aside>
     );
