@@ -75,7 +75,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
             });
 
-            Promise.allSettled(
+            const results = await Promise.allSettled(
                 orders.map(async (order) => {
                     const qrCodeBuffer = await QRCode.toBuffer(order.code, {
                         type: 'png',
@@ -94,7 +94,13 @@ export const stripeWebhook = async (req: Request, res: Response) => {
                         qrCodeBuffer,
                     });
                 })
-            ).catch((err) => console.error('Ticket email error:', err));
+            );
+
+            results.forEach((r, i) => {
+                if (r.status === 'rejected') {
+                    console.error(`Ticket email failed for order ${orders[i].code}:`, r.reason);
+                }
+            });
         }
     }
 
