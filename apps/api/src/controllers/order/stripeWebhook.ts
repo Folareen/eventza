@@ -28,6 +28,10 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
         if (!orders.length) return res.json({ received: true });
 
+        if (orders.every((o) => o.status === 'confirmed')) {
+            return res.json({ received: true });
+        }
+
         await Order.update(
             { status: 'confirmed' },
             { where: { stripePaymentIntentId: paymentIntent.id } }
@@ -35,7 +39,6 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
         const ticket = await Ticket.findByPk(orders[0].ticketId);
 
-        // Increment quantitySold now that payment is confirmed
         if (ticket) {
             ticket.quantitySold += orders.length;
             await ticket.save();
@@ -80,7 +83,6 @@ export const stripeWebhook = async (req: Request, res: Response) => {
     if (event.type === 'payment_intent.payment_failed') {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-        // Cancel orders so availability is freed up
         await Order.update(
             { status: 'cancelled' },
             { where: { stripePaymentIntentId: paymentIntent.id } }
