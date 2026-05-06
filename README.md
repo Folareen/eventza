@@ -27,7 +27,7 @@ Three apps in a monorepo:
 | Layer | Tech |
 |---|---|
 | API | Express 5, TypeScript, Sequelize, PostgreSQL |
-| Auth | Argon2, JWT, OTP via Nodemailer |
+| Auth | Argon2, JWT, OTP via Resend |
 | Payments | Stripe |
 | Storage | AWS S3 (via multer) |
 | Validation | Zod |
