@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Event from '../../models/Event';
-import { uploadToS3 } from '../../services/s3';
+import { uploadToCloudinary } from '../../services/cloudinary';
 
 type MulterRequestWithFile = Request & { file?: Express.Multer.File };
 
@@ -10,7 +10,7 @@ export const createEvent = async (req: Request, res: Response) => {
         let bannerImageUrl = req.body.bannerImage;
         const reqWithFile = req as MulterRequestWithFile;
         if (reqWithFile.file) {
-            bannerImageUrl = await uploadToS3(reqWithFile.file);
+            bannerImageUrl = await uploadToCloudinary(reqWithFile.file);
         }
         const event = await Event.create({
             title,
