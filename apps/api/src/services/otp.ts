@@ -49,7 +49,11 @@ export const verifyOtp = async (
     return { valid: true };
 };
 
-export const invalidateOtps = async (userId: number, type: OtpType): Promise<void> => {
+export const invalidateOtps = async (
+    userId: number,
+    type: OtpType,
+    transaction?: Transaction
+): Promise<void> => {
     await Otp.update(
         { status: OtpStatus.INVALIDATED },
         {
@@ -58,6 +62,7 @@ export const invalidateOtps = async (userId: number, type: OtpType): Promise<voi
                 type,
                 status: OtpStatus.ACTIVE,
             },
+            transaction,
         }
     );
 };
