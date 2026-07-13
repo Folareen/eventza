@@ -52,14 +52,6 @@ function keepAlive() {
     });
 }
 
-function keepDBAlive() {
-    sequelize.query('SELECT 1').then(() => {
-        console.log('[keep-alive] database connection is alive');
-    }).catch((err) => {
-        console.error('[keep-alive] database ping failed:', err.message);
-    });
-}
-
 (async () => {
     try {
         await sequelize.authenticate();
@@ -68,7 +60,6 @@ function keepDBAlive() {
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
             setInterval(keepAlive, 14 * 60 * 1000);
-            setInterval(keepDBAlive, 24 * 60 * 60 * 1000);
         });
     } catch (err) {
         console.error('Failed to start server:', err);
