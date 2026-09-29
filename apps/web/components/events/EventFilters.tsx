@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { RiSearchLine, RiFilter3Line } from 'react-icons/ri';
+import { RiSearchLine, RiEqualizerLine, RiCloseLine } from 'react-icons/ri';
+import { cn } from '@/lib/cn';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
+import { controlClasses } from '../ui/Field';
 import { COUNTRIES, EVENT_CATEGORIES } from '@/lib/constants';
 
 const countryOptions = COUNTRIES.map((c) => ({ value: c.name, label: c.name }));
@@ -29,11 +31,15 @@ export function EventFilters() {
         setEndDate(sp.get('endDate') ?? '');
     }, [sp]);
 
+    // Count only the advanced filters — search has its own visible field.
+    const activeCount = [country, category, startDate, endDate].filter(Boolean).length;
+
     const push = (overrides: Record<string, string> = {}) => {
         const p = new URLSearchParams();
         const vals = { search, country, category, startDate, endDate, ...overrides };
         Object.entries(vals).forEach(([k, v]) => { if (v) p.set(k, v); });
-        router.push(`/?${p.toString()}`);
+        const qs = p.toString();
+        router.push(qs ? `/?${qs}#events` : '/#events');
         setOpen(false);
     };
 
@@ -43,38 +49,114 @@ export function EventFilters() {
         setOpen(false);
     };
 
+    const chips = [
+        country && { key: 'country', label: country, clear: () => push({ country: '' }) },
+        category && { key: 'category', label: category, clear: () => push({ category: '' }) },
+        startDate && { key: 'startDate', label: `From ${startDate}`, clear: () => push({ startDate: '' }) },
+        endDate && { key: 'endDate', label: `To ${endDate}`, clear: () => push({ endDate: '' }) },
+    ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
+
     return (
         <div className="flex flex-col gap-3">
             <div className="flex gap-2">
-                <div className="relative flex-1">
-                    <RiSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                <div className="relative flex flex-1 items-center">
+                    <RiSearchLine className="pointer-events-none absolute left-3 h-4 w-4 text-ink-4" />
                     <input
-                        type="text"
-                        placeholder="Search events..."
+                        type="search"
+                        placeholder="Search events, venues, organisers…"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') push(); }}
-                        className="h-10 w-full rounded-lg border border-zinc-300 bg-white pl-9 pr-3 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors focus:outline-none focus:ring-2 focus:border-indigo-500 focus:ring-indigo-500/30 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-indigo-500"
+                        aria-label="Search events"
+                        className={cn(controlClasses(), 'h-11 pl-9 pr-3')}
                     />
                 </div>
-                <Button variant="secondary" onClick={() => setOpen((o) => !o)} className="gap-2 shrink-0">
-                    <RiFilter3Line className="h-4 w-4" />
+
+                <Button
+                    variant="secondary"
+                    size="lg"
+                    onClick={() => setOpen((o) => !o)}
+                    aria-expanded={open}
+                    className="shrink-0"
+                >
+                    <RiEqualizerLine className="h-4 w-4" />
                     <span className="hidden sm:inline">Filters</span>
+                    {activeCount > 0 && (
+                        <span className="ml-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-semibold text-white">
+                            {activeCount}
+                        </span>
+                    )}
                 </Button>
-                <Button onClick={() => push()} className="shrink-0">Search</Button>
+
+                <Button size="lg" onClick={() => push()} className="shrink-0">
+                    Search
+                </Button>
             </div>
 
+            {chips.length > 0 && !open && (
+                <div className="flex flex-wrap items-center gap-2 animate-fade">
+                    {chips.map((chip) => (
+                        <button
+                            key={chip.key}
+                            onClick={chip.clear}
+                            className="group inline-flex items-center gap-1.5 rounded-full border border-line bg-surface py-1 pl-3 pr-2 text-[12px] font-medium text-ink-2 transition-colors hover:border-ink-4 cursor-pointer"
+                        >
+                            {chip.label}
+                            <RiCloseLine className="h-3.5 w-3.5 text-ink-4 transition-colors group-hover:text-danger" />
+                        </button>
+                    ))}
+                    <button
+                        onClick={handleReset}
+                        className="ml-1 text-[12px] font-medium text-ink-4 underline underline-offset-2 transition-colors hover:text-ink cursor-pointer"
+                    >
+                        Clear all
+                    </button>
+                </div>
+            )}
+
             {open && (
-                <div className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                        <Select label="Country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="All countries" options={countryOptions} />
-                        <Select label="Category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="All categories" options={categoryOptions} />
-                        <Input label="From date" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                        <Input label="To date" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                <div className="animate-scale-in origin-top rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-sm">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <Select
+                            label="Country"
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
+                            placeholder="All countries"
+                            options={countryOptions}
+                        />
+                        <Select
+                            label="Category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            placeholder="All categories"
+                            options={categoryOptions}
+                        />
+                        <Input
+                            label="From date"
+                            type="date"
+                            value={startDate}
+                            max={endDate || undefined}
+                            onChange={(e) => setStartDate(e.target.value)}
+                        />
+                        <Input
+                            label="To date"
+                            type="date"
+                            value={endDate}
+                            min={startDate || undefined}
+                            onChange={(e) => setEndDate(e.target.value)}
+                        />
                     </div>
-                    <div className="mt-4 flex justify-end gap-2">
-                        <Button variant="ghost" size="sm" onClick={handleReset}>Reset</Button>
-                        <Button size="sm" onClick={() => push()}>Apply</Button>
+                    <div className="mt-5 flex items-center justify-between gap-2 border-t border-line pt-4">
+                        <button
+                            onClick={handleReset}
+                            className="text-[13px] font-medium text-ink-3 transition-colors hover:text-ink cursor-pointer"
+                        >
+                            Reset all
+                        </button>
+                        <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
+                            <Button size="sm" onClick={() => push()}>Apply filters</Button>
+                        </div>
                     </div>
                 </div>
             )}

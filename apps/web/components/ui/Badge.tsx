@@ -1,4 +1,6 @@
-type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info';
+import { cn } from '@/lib/cn';
+
+type BadgeVariant = 'default' | 'accent' | 'success' | 'warning' | 'danger' | 'outline';
 
 interface BadgeProps {
     variant?: BadgeVariant;
@@ -7,17 +9,23 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-    default: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
-    success: 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    warning: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    danger: 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    info: 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    default: 'bg-surface-2 text-ink-2 border-transparent',
+    accent:  'bg-accent-soft text-accent-text border-accent-line',
+    success: 'bg-success-soft text-success border-success-line',
+    warning: 'bg-warning-soft text-warning border-warning-line',
+    danger:  'bg-danger-soft text-danger border-danger-line',
+    outline: 'bg-transparent text-ink-3 border-line-strong',
 };
 
-export function Badge({ variant = 'default', children, className = '' }: BadgeProps) {
+export function Badge({ variant = 'default', children, className }: BadgeProps) {
     return (
         <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variantClasses[variant]} ${className}`}
+            className={cn(
+                'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5',
+                'text-[11px] font-medium leading-5 tracking-wide whitespace-nowrap',
+                variantClasses[variant],
+                className,
+            )}
         >
             {children}
         </span>

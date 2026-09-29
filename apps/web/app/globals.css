@@ -1,13 +1,61 @@
 @import "tailwindcss";
+@import "@eventza/shared/styles/tokens.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: "cv11", "ss01";
+    }
+
+    /* Display face for headings — set per-element, not globally,
+       so UI chrome (buttons, labels, tables) stays in Geist. */
+    .font-display {
+        font-family: var(--font-display), Georgia, serif;
+        font-weight: 400;
+        letter-spacing: -0.015em;
+    }
+
+    ::selection {
+        background: var(--accent);
+        color: #fff;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+    }
+
+    /* Warm-tinted native form controls */
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        opacity: .5;
+        cursor: pointer;
+    }
+    :root.dark input[type="date"]::-webkit-calendar-picker-indicator,
+    :root.dark input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+
+    /* Scrollbars follow the neutral ramp */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-strong) transparent;
+    }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+        background: var(--line-strong);
+        border-radius: 999px;
+        border: 3px solid var(--paper);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
 }
 
-body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}

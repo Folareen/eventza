@@ -1,10 +1,15 @@
 'use client';
 
 import { use } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { RiTicket2Line } from 'react-icons/ri';
 import { EventForm } from '@/components/events/EventForm';
-import { Spinner } from '@/components/ui/Spinner';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/Button';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useMyEvent, useUpdateEvent } from '@/lib/queries/events';
 
 export default function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
@@ -25,14 +30,29 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
     };
 
     return (
-        <div className="flex flex-col gap-6 max-w-2xl">
-            <div>
-                <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Edit event</h1>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Update your event details</p>
-            </div>
-            {isLoading ? <div className="flex justify-center py-16"><Spinner size="lg" /></div>
-                : !event ? <p className="text-zinc-400">Event not found.</p>
-                    : <EventForm initialData={event} onSubmit={handleSubmit} loading={isPending} />}
+        <div className="flex max-w-3xl flex-col gap-7">
+            <PageHeader title="Edit event" description="Update the details attendees see." />
+
+            {isLoading ? (
+                <div className="flex flex-col gap-6">
+                    {Array.from({ length: 3 }, (_, i) => (
+                        <Skeleton key={i} className="h-[120px] rounded-[var(--radius-card)]" />
+                    ))}
+                </div>
+            ) : !event ? (
+                <EmptyState
+                    icon={RiTicket2Line}
+                    title="Event not found"
+                    description="It may have been deleted, or you don't have access to it."
+                    action={
+                        <Button variant="secondary" asChild>
+                            <Link href="/dashboard/events">Back to my events</Link>
+                        </Button>
+                    }
+                />
+            ) : (
+                <EventForm initialData={event} onSubmit={handleSubmit} loading={isPending} />
+            )}
         </div>
     );
 }

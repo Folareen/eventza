@@ -6,18 +6,18 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { RiCalendarEventLine, RiMailSendLine, RiArrowRightLine } from 'react-icons/ri';
+import { RiMailSendLine, RiArrowRightLine, RiArrowLeftLine } from 'react-icons/ri';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { AuthShell, AuthHeading } from '@/components/auth/AuthShell';
 
-const schema = z.object({ email: z.string().email('Invalid email') });
+const schema = z.object({ email: z.string().email('Enter a valid email') });
 
 export default function ForgotPasswordPage() {
-    const [sent, setSent] = useState(false);
-    const [sentEmail, setSentEmail] = useState('');
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<{ email: string }>({
-        resolver: zodResolver(schema),
-    });
+    const [sentEmail, setSentEmail] = useState<string | null>(null);
+    const {
+        register, handleSubmit, formState: { errors, isSubmitting },
+    } = useForm<{ email: string }>({ resolver: zodResolver(schema) });
 
     const onSubmit = handleSubmit(async ({ email }) => {
         const res = await fetch('/api/auth/request-password-reset', {
@@ -28,52 +28,63 @@ export default function ForgotPasswordPage() {
         const data = await res.json();
         if (!res.ok) { toast.error(data.error ?? 'Failed to send reset email'); return; }
         setSentEmail(email);
-        setSent(true);
     });
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-white dark:bg-zinc-950">
-            <div className="w-full max-w-sm">
-                <Link href="/" className="flex items-center justify-center gap-2 mb-10">
-                    <RiCalendarEventLine className="h-5 w-5 text-indigo-600" />
-                    <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight">eventza</span>
-                </Link>
-
-                {sent ? (
-                    <div className="text-center">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-950/40">
-                            <RiMailSendLine className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">Check your inbox</h2>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-                            We sent a reset link to <span className="font-medium text-zinc-700 dark:text-zinc-300">{sentEmail}</span>.
-                        </p>
-                        <Link
-                            href="/auth/reset-password"
-                            className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
-                        >
+        <AuthShell aside={false}>
+            {sentEmail ? (
+                <div className="text-center animate-rise">
+                    <span className="mx-auto mb-5 flex h-12 w-12 animate-pop items-center justify-center rounded-full bg-accent-soft">
+                        <RiMailSendLine className="h-6 w-6 text-accent" />
+                    </span>
+                    <h1 className="font-display text-[28px] leading-tight text-ink">Check your inbox</h1>
+                    <p className="mt-2.5 text-[14px] leading-relaxed text-ink-3">
+                        We sent a reset code to{' '}
+                        <span className="font-medium text-ink">{sentEmail}</span>.
+                    </p>
+                    <Button size="lg" className="mt-7 w-full" asChild>
+                        <Link href="/auth/reset-password">
                             Enter reset code <RiArrowRightLine className="h-4 w-4" />
                         </Link>
-                    </div>
-                ) : (
-                    <>
-                        <div className="mb-8">
-                            <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Forgot your password?</h2>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">We&apos;ll send a reset code to your email.</p>
-                        </div>
-                        <form onSubmit={onSubmit} className="flex flex-col gap-4">
-                            <Input label="Email" type="email" {...register('email')} error={errors.email?.message} autoComplete="email" />
-                            <Button type="submit" loading={isSubmitting} className="w-full">
-                                Send reset code <RiMailSendLine className="h-4 w-4" />
-                            </Button>
-                        </form>
-                    </>
-                )}
+                    </Button>
+                    <button
+                        onClick={() => setSentEmail(null)}
+                        className="mt-4 text-[13px] text-ink-3 transition-colors hover:text-ink cursor-pointer"
+                    >
+                        Use a different email
+                    </button>
+                </div>
+            ) : (
+                <>
+                    <AuthHeading
+                        title="Forgot your password?"
+                        subtitle="We'll email you a code to set a new one."
+                    />
+                    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+                        <Input
+                            label="Email"
+                            type="email"
+                            autoComplete="email"
+                            placeholder="you@example.com"
+                            autoFocus
+                            {...register('email')}
+                            error={errors.email?.message}
+                        />
+                        <Button type="submit" size="lg" loading={isSubmitting} className="w-full">
+                            Send reset code <RiMailSendLine className="h-4 w-4" />
+                        </Button>
+                    </form>
+                </>
+            )}
 
-                <p className="mt-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
-                    <Link href="/auth/login" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">← Back to sign in</Link>
-                </p>
-            </div>
-        </div>
+            <p className="mt-8 text-center">
+                <Link
+                    href="/auth/login"
+                    className="inline-flex items-center gap-1.5 text-[13px] text-ink-3 transition-colors hover:text-ink"
+                >
+                    <RiArrowLeftLine className="h-3.5 w-3.5" /> Back to sign in
+                </Link>
+            </p>
+        </AuthShell>
     );
 }

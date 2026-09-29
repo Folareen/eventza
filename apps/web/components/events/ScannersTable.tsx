@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { HiOutlinePencil, HiTrash } from 'react-icons/hi2';
+import { RiPencilLine, RiDeleteBin6Line, RiQrScanLine } from 'react-icons/ri';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { Badge } from '../ui/Badge';
+import { EmptyState } from '../ui/EmptyState';
+import { CheckboxList } from '../ui/CheckboxList';
 import type { Scanner } from '@/lib/types';
 
 interface ScannersTableProps {
@@ -15,11 +18,15 @@ interface ScannersTableProps {
     updating?: number | null;
 }
 
-export function ScannersTable({ scanners, userEvents, onUpdate, onDelete, updating }: ScannersTableProps) {
+export function ScannersTable({
+    scanners, userEvents, onUpdate, onDelete, updating,
+}: ScannersTableProps) {
     const [editScanner, setEditScanner] = useState<Scanner | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState<Scanner | null>(null);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [selectedEventIds, setSelectedEventIds] = useState<number[]>([]);
+    const [saving, setSaving] = useState(false);
 
     const openEdit = (s: Scanner) => {
         setEditScanner(s);
@@ -29,86 +36,145 @@ export function ScannersTable({ scanners, userEvents, onUpdate, onDelete, updati
     };
 
     const toggleEvent = (id: number) =>
-        setSelectedEventIds((ids) => ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]);
+        setSelectedEventIds((ids) => (ids.includes(id) ? ids.filter((i) => i !== id) : [...ids, id]));
 
     const handleSave = async () => {
         if (!editScanner) return;
-        const data: { username?: string; password?: string; eventIds?: number[] } = { eventIds: selectedEventIds };
-        if (username !== editScanner.username) data.username = username;
-        if (password) data.password = password;
-        await onUpdate(editScanner.id, data);
-        setEditScanner(null);
+        setSaving(true);
+        try {
+            const data: { username?: string; password?: string; eventIds?: number[] } = {
+                eventIds: selectedEventIds,
+            };
+            if (username !== editScanner.username) data.username = username;
+            if (password) data.password = password;
+            await onUpdate(editScanner.id, data);
+            setEditScanner(null);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!confirmDelete) return;
+        await onDelete(confirmDelete.id);
+        setConfirmDelete(null);
     };
 
     if (scanners.length === 0) {
         return (
-            <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 py-12 text-center text-sm text-zinc-400">
-                No scanners yet.
-            </div>
+            <EmptyState
+                icon={RiQrScanLine}
+                title="No scanners yet"
+                description="Create a scanner account so staff can check attendees in at the door."
+            />
         );
     }
 
     return (
         <>
-            <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-                <table className="w-full text-sm">
-                    <thead className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900">
-                        <tr>
-                            <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400">Username</th>
-                            <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400">Assigned events</th>
-                            <th className="px-4 py-3 text-left font-medium text-zinc-500 dark:text-zinc-400">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
-                        {scanners.map((scanner) => (
-                            <tr key={scanner.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">
-                                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{scanner.username}</td>
-                                <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">
-                                    {scanner.events?.length
-                                        ? scanner.events.map((e) => e.title).join(', ')
-                                        : <span className="text-zinc-400">None assigned</span>
-                                    }
-                                </td>
-                                <td className="px-4 py-3">
-                                    <div className="flex gap-1">
-                                        <Button variant="ghost" size="icon" onClick={() => openEdit(scanner)}>
-                                            <HiOutlinePencil className="h-4 w-4" />
-                                        </Button>
-                                        <Button variant="danger-ghost" size="icon" loading={updating === scanner.id} onClick={() => onDelete(scanner.id)}>
-                                            <HiTrash className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <div className="stagger flex flex-col gap-2.5">
+                {scanners.map((scanner) => (
+                    <div
+                        key={scanner.id}
+                        className="group flex items-center gap-4 rounded-[var(--radius-card)] border border-line bg-surface px-4 py-3.5 transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-sm"
+                    >
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-control)] bg-surface-2 text-ink-3">
+                            <RiQrScanLine className="h-[18px] w-[18px]" />
+                        </span>
 
-            <Modal open={!!editScanner} onClose={() => setEditScanner(null)} title="Edit Scanner">
-                <div className="flex flex-col gap-4">
-                    <Input label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
-                    <Input label="New password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} hint="Leave blank to keep current password" />
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Assigned events</label>
-                        <div className="flex flex-col gap-1 max-h-48 overflow-y-auto rounded border border-zinc-200 dark:border-zinc-800 p-2">
-                            {userEvents.map((event) => (
-                                <label key={event.id} className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer text-sm text-zinc-700 dark:text-zinc-300">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedEventIds.includes(event.id)}
-                                        onChange={() => toggleEvent(event.id)}
-                                        className="rounded"
-                                    />
-                                    {event.title}
-                                </label>
-                            ))}
+                        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                            <span className="truncate font-medium text-ink">{scanner.username}</span>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                                {scanner.events?.length ? (
+                                    <>
+                                        {scanner.events.slice(0, 2).map((e) => (
+                                            <Badge key={e.id} variant="outline">{e.title}</Badge>
+                                        ))}
+                                        {scanner.events.length > 2 && (
+                                            <span className="text-[12px] text-ink-4">
+                                                +{scanner.events.length - 2} more
+                                            </span>
+                                        )}
+                                    </>
+                                ) : (
+                                    <span className="text-[12px] text-ink-4">No events assigned</span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+                            <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                onClick={() => openEdit(scanner)}
+                                aria-label={`Edit ${scanner.username}`}
+                            >
+                                <RiPencilLine className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="danger-ghost"
+                                size="icon-sm"
+                                loading={updating === scanner.id}
+                                onClick={() => setConfirmDelete(scanner)}
+                                aria-label={`Delete ${scanner.username}`}
+                            >
+                                <RiDeleteBin6Line className="h-4 w-4" />
+                            </Button>
                         </div>
                     </div>
-                    <div className="flex gap-2 justify-end">
+                ))}
+            </div>
+
+            <Modal
+                open={!!editScanner}
+                onClose={() => setEditScanner(null)}
+                title="Edit scanner"
+                description={editScanner?.username}
+            >
+                <div className="flex flex-col gap-4">
+                    <Input label="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <Input
+                        label="New password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        hint="Leave blank to keep the current password"
+                        autoComplete="new-password"
+                    />
+                    <CheckboxList
+                        label="Assigned events"
+                        items={userEvents}
+                        selected={selectedEventIds}
+                        onToggle={toggleEvent}
+                    />
+                    <div className="flex justify-end gap-2 pt-1">
                         <Button variant="ghost" onClick={() => setEditScanner(null)}>Cancel</Button>
-                        <Button onClick={handleSave} loading={updating === editScanner?.id}>Save changes</Button>
+                        <Button onClick={handleSave} loading={saving || updating === editScanner?.id}>
+                            Save changes
+                        </Button>
                     </div>
+                </div>
+            </Modal>
+
+            <Modal
+                open={!!confirmDelete}
+                onClose={() => setConfirmDelete(null)}
+                title="Delete scanner?"
+                maxWidth="sm"
+            >
+                <p className="text-sm leading-relaxed text-ink-2">
+                    <span className="font-medium text-ink">{confirmDelete?.username}</span> will no
+                    longer be able to sign in or check attendees in.
+                </p>
+                <div className="mt-6 flex justify-end gap-2">
+                    <Button variant="ghost" onClick={() => setConfirmDelete(null)}>Cancel</Button>
+                    <Button
+                        variant="danger"
+                        loading={updating === confirmDelete?.id}
+                        onClick={handleDelete}
+                    >
+                        Delete scanner
+                    </Button>
                 </div>
             </Modal>
         </>

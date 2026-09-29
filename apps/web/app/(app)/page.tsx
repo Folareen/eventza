@@ -1,25 +1,13 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
-import {
-    RiArrowRightLine,
-    RiCalendarEventLine,
-    RiMusicLine,
-    RiCodeSSlashLine,
-    RiBriefcaseLine,
-    RiBookOpenLine,
-    RiRestaurantLine,
-    RiRunLine,
-    RiPaletteLine,
-    RiGroupLine,
-    RiHeartPulseLine,
-    RiFilmLine,
-    RiSparkling2Line,
-    RiTeamLine,
-} from 'react-icons/ri';
+import { RiArrowRightLine, RiSearchLine, RiTicket2Line } from 'react-icons/ri';
 import { EventCard } from '@/components/events/EventCard';
 import { EventFilters } from '@/components/events/EventFilters';
+import { CategoryRail } from '@/components/events/CategoryRail';
 import { Footer } from '@/components/layout/Footer';
-import { Spinner } from '@/components/ui/Spinner';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { EventCardSkeleton } from '@/components/ui/Skeleton';
+import { Button } from '@/components/ui/Button';
 import type { Event, PaginationMeta } from '@/lib/types';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api/v1';
@@ -45,32 +33,39 @@ async function fetchEvents(sp: SearchParams) {
     p.set('sort', 'date');
     p.set('order', 'asc');
 
+    const empty = { events: [] as Event[], pagination: null };
     try {
         const res = await fetch(`${API}/events?${p.toString()}`, { next: { revalidate: 60 } });
-        if (!res.ok) return { events: [], pagination: null };
-        return res.json() as Promise<{ events: Event[]; pagination: PaginationMeta }>;
+        if (!res.ok) return empty;
+        // Await here: a non-JSON body (an HTML error page from a proxy, say)
+        // must be caught rather than rejecting after this function returns.
+        const data = await res.json();
+        return {
+            events: Array.isArray(data?.events) ? (data.events as Event[]) : [],
+            pagination: (data?.pagination ?? null) as PaginationMeta | null,
+        };
     } catch {
-        return { events: [], pagination: null };
+        return empty;
     }
 }
 
 const CATEGORIES = [
-    { label: 'Music', icon: RiMusicLine },
-    { label: 'Technology', icon: RiCodeSSlashLine },
-    { label: 'Business & Networking', icon: RiBriefcaseLine },
-    { label: 'Education', icon: RiBookOpenLine },
-    { label: 'Food & Drink', icon: RiRestaurantLine },
-    { label: 'Sports & Fitness', icon: RiRunLine },
-    { label: 'Arts & Culture', icon: RiPaletteLine },
-    { label: 'Health & Wellness', icon: RiHeartPulseLine },
-    { label: 'Community', icon: RiGroupLine },
-    { label: 'Film & Media', icon: RiFilmLine },
-    { label: 'Festivals & Fairs', icon: RiSparkling2Line },
-    { label: 'Family & Kids', icon: RiTeamLine },
+    'Music',
+    'Technology',
+    'Business & Networking',
+    'Education',
+    'Food & Drink',
+    'Sports & Fitness',
+    'Arts & Culture',
+    'Health & Wellness',
+    'Community',
+    'Film & Media',
+    'Festivals & Fairs',
+    'Family & Kids',
 ] as const;
 
 const isFiltered = (sp: SearchParams) =>
-    !!(sp.search || sp.country || sp.category || sp.startDate || sp.endDate);
+    Boolean(sp.search || sp.country || sp.category || sp.startDate || sp.endDate);
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
     const sp = await searchParams;
@@ -78,161 +73,181 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     const page = Number(sp.page ?? 1);
     const filtered = isFiltered(sp);
 
+    // Real counts from the API — no invented metrics.
+    const total = pagination?.total ?? events.length;
+    const cities = new Set(events.map((e) => e.state).filter(Boolean)).size;
+
     return (
-        <main className="flex-1 flex flex-col">
-
-            <section className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white">
-                <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-white/10 blur-3xl" />
-                    <div className="absolute top-1/2 left-1/3 w-64 h-64 rounded-full bg-violet-400/15 blur-3xl" />
-                    <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-indigo-400/20 blur-3xl" />
-                </div>
-
-                <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-28">
-                    <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/20 px-3 py-1 text-xs font-medium text-indigo-100 mb-6 backdrop-blur-sm">
-                            <RiCalendarEventLine className="h-3.5 w-3.5" />
+        <main className="flex flex-1 flex-col">
+            {/* ── Hero ─────────────────────────────────────────────── */}
+            <section className="relative overflow-hidden border-b border-line bg-surface">
+                <div className="relative mx-auto grid max-w-[1240px] gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:gap-16 lg:py-24">
+                    <div className="animate-rise">
+                        <p className="mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-text">
+                            <span className="h-px w-7 bg-accent" />
                             Discover · Attend · Experience
-                        </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-5">
-                            Find events worth<br />your time
-                        </h1>
-                        <p className="text-lg sm:text-xl text-indigo-200 leading-relaxed mb-8 max-w-lg">
-                            From intimate workshops to large-scale concerts — browse, book, and go. Everything in one place.
                         </p>
-                        <div className="flex flex-wrap gap-3">
-                            <Link
-                                href="#events"
-                                className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-50 transition-colors shadow-sm"
-                            >
-                                Browse Events <RiArrowRightLine className="h-4 w-4" />
-                            </Link>
-                            <Link
-                                href="/auth/register"
-                                className="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/20 backdrop-blur-sm transition-colors"
-                            >
-                                Host an Event
-                            </Link>
+
+                        <h1 className="font-display text-[42px] leading-[1.04] tracking-tight text-ink sm:text-[56px] lg:text-[64px]">
+                            Find events worth
+                            <br />
+                            <span className="relative inline-block">
+                                your time
+                                {/* Hand-drawn underline — a deliberately imperfect stroke. */}
+                                <svg
+                                    className="absolute -bottom-2 left-0 h-[10px] w-full text-accent"
+                                    viewBox="0 0 200 10"
+                                    preserveAspectRatio="none"
+                                    aria-hidden
+                                >
+                                    <path
+                                        d="M2 7.5C40 3.2 90 2.4 128 4.6c26 1.5 48 2.8 70 1.2"
+                                        stroke="currentColor"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        fill="none"
+                                    />
+                                </svg>
+                            </span>
+                        </h1>
+
+                        <p className="mt-7 max-w-md text-[17px] leading-relaxed text-ink-3">
+                            From intimate workshops to large-scale concerts — browse, book, and go.
+                            Everything in one place.
+                        </p>
+
+                        <div className="mt-8 flex flex-wrap items-center gap-3">
+                            <Button size="lg" asChild>
+                                <Link href="#events">
+                                    Browse events <RiArrowRightLine className="h-4 w-4" />
+                                </Link>
+                            </Button>
+                            <Button size="lg" variant="secondary" asChild>
+                                <Link href="/auth/register">Host an event</Link>
+                            </Button>
                         </div>
+
+                        {total > 0 && (
+                            <p className="mt-8 text-[13px] text-ink-4">
+                                <span className="font-semibold text-ink-2">{total}</span>{' '}
+                                {total === 1 ? 'event' : 'events'} listed
+                                {cities > 0 && (
+                                    <> across <span className="font-semibold text-ink-2">{cities}</span>{' '}
+                                    {cities === 1 ? 'region' : 'regions'}</>
+                                )}
+                            </p>
+                        )}
                     </div>
+
+                    {/* Editorial collage — real event imagery, not decorative blobs. */}
+                    <HeroCollage events={events.slice(0, 3)} />
                 </div>
             </section>
 
-            <div className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-800">
-                    {[
-                        { value: '500+', label: 'Events listed' },
-                        { value: '50+', label: 'Cities covered' },
-                        { value: '10k+', label: 'Tickets sold' },
-                    ].map(({ value, label }) => (
-                        <div key={label} className="flex flex-col items-center px-4 sm:px-8 gap-0.5">
-                            <span className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">{value}</span>
-                            <span className="text-xs text-zinc-500 dark:text-zinc-400 text-center">{label}</span>
-                        </div>
-                    ))}
+            {/* ── Category rail ────────────────────────────────────── */}
+            <section className="border-b border-line bg-paper">
+                <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6">
+                    <CategoryRail categories={CATEGORIES} active={sp.category} />
                 </div>
-            </div>
+            </section>
 
-            {!filtered && (
-                <section className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
-                        <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-5">Browse by category</h2>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                            {CATEGORIES.map(({ label, icon: Icon }) => (
-                                <Link
-                                    key={label}
-                                    href={`/?category=${encodeURIComponent(label)}`}
-                                    className="group flex flex-col items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-4 text-center hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-sm transition-all duration-150"
-                                >
-                                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/40 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-950/60 transition-colors">
-                                        <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                                    </span>
-                                    <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300 leading-tight">{label}</span>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            <section id="events" className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-8 flex flex-col gap-6">
-                <div className="flex items-center justify-between">
+            {/* ── Events ───────────────────────────────────────────── */}
+            <section id="events" className="mx-auto flex w-full max-w-[1240px] flex-1 flex-col gap-6 px-4 py-12 sm:px-6">
+                <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                        <h2 className="font-display text-[30px] leading-tight text-ink">
                             {filtered ? 'Search results' : 'Upcoming events'}
                         </h2>
-                        {filtered && (
-                            <Link href="/" className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline mt-0.5 inline-block">
-                                ← Clear filters
-                            </Link>
-                        )}
+                        <p className="mt-1 text-sm text-ink-3">
+                            {filtered
+                                ? `${total} ${total === 1 ? 'match' : 'matches'}`
+                                : 'Freshly listed, sorted by date'}
+                        </p>
                     </div>
-                    {sp.category && (
-                        <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                            Category: <span className="font-medium text-zinc-700 dark:text-zinc-300">{sp.category}</span>
-                        </span>
+                    {filtered && (
+                        <Link
+                            href="/"
+                            className="text-[13px] font-medium text-accent-text transition-opacity hover:opacity-70"
+                        >
+                            Clear all filters
+                        </Link>
                     )}
                 </div>
 
                 <EventFilters />
 
-                <Suspense fallback={<div className="flex justify-center py-20"><Spinner size="lg" /></div>}>
-                    {events.length === 0 ? (
-                        <div className="flex flex-col items-center py-24 text-center">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
-                                <RiCalendarEventLine className="h-8 w-8 text-zinc-400 dark:text-zinc-500" />
-                            </div>
-                            <p className="text-base font-semibold text-zinc-700 dark:text-zinc-300 mb-1">No events found</p>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 max-w-xs">
-                                {filtered ? 'Try adjusting or clearing your filters.' : 'No upcoming events yet. Check back soon.'}
-                            </p>
-                            {filtered && (
-                                <Link href="/" className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-                                    View all events
-                                </Link>
-                            )}
+                <Suspense
+                    fallback={
+                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {Array.from({ length: 8 }, (_, i) => <EventCardSkeleton key={i} />)}
                         </div>
+                    }
+                >
+                    {events.length === 0 ? (
+                        <EmptyState
+                            icon={filtered ? RiSearchLine : RiTicket2Line}
+                            title={filtered ? 'No matching events' : 'No events yet'}
+                            description={
+                                filtered
+                                    ? 'Try widening your search or clearing a filter or two.'
+                                    : 'Nothing is listed right now. Check back soon, or host the first one.'
+                            }
+                            action={
+                                filtered ? (
+                                    <Button variant="secondary" asChild><Link href="/">View all events</Link></Button>
+                                ) : (
+                                    <Button asChild><Link href="/auth/register">Host an event</Link></Button>
+                                )
+                            }
+                        />
                     ) : (
                         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                            {events.map((event) => (
-                                <EventCard key={event.id} event={event} />
+                            {events.map((event, i) => (
+                                <EventCard key={event.id} event={event} index={i} />
                             ))}
                         </div>
                     )}
                 </Suspense>
 
                 {pagination && pagination.totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-3 mt-2">
-                        {page > 1 && <PaginationLink sp={sp} page={page - 1} label="← Previous" />}
-                        <span className="text-sm text-zinc-500 dark:text-zinc-400">Page {page} of {pagination.totalPages}</span>
-                        {page < pagination.totalPages && <PaginationLink sp={sp} page={page + 1} label="Next →" />}
-                    </div>
+                    <nav className="mt-4 flex items-center justify-center gap-2" aria-label="Pagination">
+                        <PaginationLink sp={sp} page={page - 1} disabled={page <= 1} label="Previous" />
+                        <span className="px-3 text-[13px] text-ink-3">
+                            Page <span className="font-semibold text-ink">{page}</span> of {pagination.totalPages}
+                        </span>
+                        <PaginationLink sp={sp} page={page + 1} disabled={page >= pagination.totalPages} label="Next" />
+                    </nav>
                 )}
             </section>
 
-            <section className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 flex flex-col sm:flex-row items-center justify-between gap-8">
-                    <div className="max-w-lg">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-3">
+            {/* ── Host CTA ─────────────────────────────────────────── */}
+            <section className="border-t border-line bg-surface">
+                <div className="mx-auto max-w-[1240px] px-4 py-20 sm:px-6">
+                    <div className="grain relative overflow-hidden rounded-[var(--radius-panel)] bg-ink px-8 py-14 text-center sm:px-16">
+                        <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+                            For organisers
+                        </p>
+                        <h2 className="mx-auto max-w-xl font-display text-[34px] leading-[1.12] text-paper sm:text-[42px]">
                             Ready to host your own event?
                         </h2>
-                        <p className="text-zinc-500 dark:text-zinc-400 text-sm sm:text-base leading-relaxed">
-                            Create an event, set up tickets, and reach your audience — all from your dashboard. No setup fees.
+                        <p className="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-paper/65">
+                            Create an event, set up tickets, and reach your audience — all from one
+                            dashboard. No setup fees.
                         </p>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-                        <Link
-                            href="/auth/register"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm"
-                        >
-                            Get started for free <RiArrowRightLine className="h-4 w-4" />
-                        </Link>
-                        <Link
-                            href="/auth/login"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-6 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-                        >
-                            Sign in
-                        </Link>
+                        <div className="mt-9 flex flex-wrap justify-center gap-3">
+                            <Link
+                                href="/auth/register"
+                                className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] bg-accent px-6 text-[15px] font-medium text-white transition-colors hover:bg-accent-hover"
+                            >
+                                Get started free <RiArrowRightLine className="h-4 w-4" />
+                            </Link>
+                            <Link
+                                href="/auth/login"
+                                className="inline-flex h-12 items-center rounded-[var(--radius-control)] border border-paper/25 px-6 text-[15px] font-medium text-paper transition-colors hover:bg-paper/10"
+                            >
+                                Sign in
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -242,13 +257,74 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     );
 }
 
-function PaginationLink({ sp, page, label }: { sp: SearchParams; page: number; label: string }) {
+/** Staggered image collage. Falls back to a typographic panel when
+ *  there are no events to show yet. */
+function HeroCollage({ events }: { events: Event[] }) {
+    const withImages = events.filter((e) => e.bannerImage);
+
+    if (withImages.length === 0) {
+        return (
+            <div className="relative hidden lg:block">
+                <div className="grain relative aspect-[4/3] overflow-hidden rounded-[var(--radius-panel)] bg-surface-2">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+                        <RiTicket2Line className="h-10 w-10 text-ink-4/40" />
+                        <p className="font-display text-[22px] text-ink-3">Your next night out</p>
+                        <p className="max-w-[200px] text-[13px] leading-relaxed text-ink-4">
+                            Listed events appear here as organisers publish them.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="relative hidden lg:block" aria-hidden>
+            <div className="relative aspect-[4/3]">
+                {withImages.map((event, i) => {
+                    // Three overlapping plates, each rotated slightly.
+                    const layout = [
+                        'left-0 top-4 h-[62%] w-[58%] -rotate-[3deg] z-20',
+                        'right-0 top-0 h-[46%] w-[46%] rotate-[4deg] z-10',
+                        'bottom-0 right-6 h-[50%] w-[54%] rotate-[-2deg] z-30',
+                    ][i];
+                    return (
+                        <div
+                            key={event.id}
+                            style={{ animationDelay: `${120 + i * 110}ms` }}
+                            className={`absolute animate-rise overflow-hidden rounded-[var(--radius-card)] border-4 border-surface shadow-xl ${layout}`}
+                        >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={event.bannerImage}
+                                alt=""
+                                className="h-full w-full object-cover"
+                                loading="eager"
+                            />
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+function PaginationLink({
+    sp, page, label, disabled,
+}: { sp: SearchParams; page: number; label: string; disabled: boolean }) {
+    if (disabled) {
+        return (
+            <span className="inline-flex h-9 cursor-not-allowed items-center rounded-[var(--radius-control)] border border-line px-4 text-[13px] font-medium text-ink-4/50">
+                {label}
+            </span>
+        );
+    }
     const p = new URLSearchParams();
     Object.entries({ ...sp, page: String(page) }).forEach(([k, v]) => { if (v) p.set(k, v); });
     return (
         <Link
-            href={`/?${p.toString()}`}
-            className="px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+            href={`/?${p.toString()}#events`}
+            className="inline-flex h-9 items-center rounded-[var(--radius-control)] border border-line-strong bg-surface px-4 text-[13px] font-medium text-ink-2 transition-colors hover:bg-surface-2"
         >
             {label}
         </Link>

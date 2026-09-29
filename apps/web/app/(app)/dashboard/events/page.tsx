@@ -1,132 +1,188 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { useMemo } from 'react';
 import {
-    RiAddLine,
-    RiCalendarLine,
-    RiMapPinLine,
-    RiArrowRightSLine,
-    RiCalendarEventLine,
-    RiTimeLine,
-    RiCheckboxCircleLine,
-    RiBarChartLine,
+    RiAddLine, RiMapPinLine, RiArrowRightSLine, RiCalendarEventLine,
+    RiTimeLine, RiCheckboxCircleLine, RiBarChartLine, RiTicket2Line,
 } from 'react-icons/ri';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { RowSkeleton, Skeleton } from '@/components/ui/Skeleton';
+import { formatDate, dateParts, isPast, relativeDay } from '@/lib/format';
 import { useMyEvents } from '@/lib/queries/events';
 import type { Event } from '@/lib/types';
 
-function formatDate(d: string) {
-    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function getEventStatus(event: Event): { label: string; color: string } {
-    const eventDate = new Date(`${event.date}T${event.time}`);
-    const now = new Date();
-    if (eventDate > now) return { label: 'Upcoming', color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30' };
-    return { label: 'Past', color: 'text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800' };
-}
-
 export default function MyEventsPage() {
     const { data, isLoading } = useMyEvents();
-    const events = data?.events ?? [];
+    const events = useMemo(() => data?.events ?? [], [data]);
 
-    const upcoming = events.filter(e => new Date(`${e.date}T${e.time}`) > new Date());
-    const past = events.filter(e => new Date(`${e.date}T${e.time}`) <= new Date());
+    const { upcoming, past } = useMemo(() => ({
+        upcoming: events.filter((e) => !isPast(e.date, e.time)),
+        past: events.filter((e) => isPast(e.date, e.time)),
+    }), [events]);
+
+    const stats = [
+        { label: 'Total events', value: events.length, icon: RiCalendarEventLine },
+        { label: 'Upcoming', value: upcoming.length, icon: RiTimeLine },
+        { label: 'Completed', value: past.length, icon: RiCheckboxCircleLine },
+    ];
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">My Events</h1>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage and track all your events</p>
-                </div>
-                <Button asChild size="sm">
-                    <Link href="/dashboard/events/new" className="flex items-center gap-1.5">
-                        <RiAddLine className="h-4 w-4" /> Create event
-                    </Link>
-                </Button>
-            </div>
-
-            {!isLoading && events.length > 0 && (
-                <div className="grid grid-cols-3 gap-3">
-                    {[
-                        { label: 'Total events', value: events.length, icon: RiCalendarEventLine, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-50 dark:bg-indigo-950/30' },
-                        { label: 'Upcoming', value: upcoming.length, icon: RiTimeLine, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/30' },
-                        { label: 'Past', value: past.length, icon: RiCheckboxCircleLine, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
-                    ].map(({ label, value, icon: Icon, color, bg }) => (
-                        <div key={label} className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 flex items-center gap-3">
-                            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${bg}`}>
-                                <Icon className={`h-5 w-5 ${color}`} />
-                            </div>
-                            <div>
-                                <p className="text-xl font-bold text-zinc-900 dark:text-zinc-50 leading-none">{value}</p>
-                                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{label}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+        <div className="flex flex-col gap-7">
+            <PageHeader
+                title="My events"
+                description="Manage, track, and grow everything you're hosting."
+                action={
+                    <Button asChild>
+                        <Link href="/dashboard/events/new">
+                            <RiAddLine className="h-4 w-4" /> Create event
+                        </Link>
+                    </Button>
+                }
+            />
 
             {isLoading ? (
-                <div className="flex justify-center py-16">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-200 border-t-indigo-600" />
-                </div>
-            ) : events.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700 py-20 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
-                        <RiCalendarLine className="h-7 w-7 text-zinc-400 dark:text-zinc-500" />
+                <>
+                    <div className="grid grid-cols-3 gap-3">
+                        {Array.from({ length: 3 }, (_, i) => (
+                            <Skeleton key={i} className="h-[84px] rounded-[var(--radius-card)]" />
+                        ))}
                     </div>
-                    <p className="font-semibold text-zinc-700 dark:text-zinc-300 mb-1">No events yet</p>
-                    <p className="text-sm text-zinc-400 dark:text-zinc-500 mb-5 max-w-xs">Create your first event and start selling tickets in minutes.</p>
-                    <Button size="sm" asChild>
-                        <Link href="/dashboard/events/new">Create your first event</Link>
-                    </Button>
-                </div>
+                    <div className="flex flex-col gap-2.5">
+                        {Array.from({ length: 4 }, (_, i) => <RowSkeleton key={i} />)}
+                    </div>
+                </>
+            ) : events.length === 0 ? (
+                <EmptyState
+                    icon={RiTicket2Line}
+                    title="No events yet"
+                    description="Create your first event and start selling tickets in minutes."
+                    action={
+                        <Button asChild>
+                            <Link href="/dashboard/events/new">
+                                <RiAddLine className="h-4 w-4" /> Create your first event
+                            </Link>
+                        </Button>
+                    }
+                />
             ) : (
-                <div className="flex flex-col gap-2">
-                    {events.map((event) => {
-                        const status = getEventStatus(event);
-                        return (
+                <>
+                    <div className="stagger grid grid-cols-3 gap-3">
+                        {stats.map(({ label, value, icon: Icon }) => (
                             <div
-                                key={event.id}
-                                className="flex items-center gap-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3.5 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm transition-all group"
+                                key={label}
+                                className="flex flex-col gap-2.5 rounded-[var(--radius-card)] border border-line bg-surface p-4"
                             >
-                                <Link href={`/dashboard/events/${event.id}`} className="flex items-center gap-4 flex-1 min-w-0">
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-950/30">
-                                        <RiCalendarEventLine className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                                    </div>
-                                    <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-                                        <span className="font-medium text-zinc-900 dark:text-zinc-50 truncate">{event.title}</span>
-                                        <div className="flex items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
-                                            <span className="flex items-center gap-1"><RiCalendarLine className="h-3 w-3" />{formatDate(event.date)}</span>
-                                            <span className="hidden sm:flex items-center gap-1 truncate"><RiMapPinLine className="h-3 w-3 shrink-0" />{event.venue}</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                                <div className="flex items-center gap-2.5 shrink-0">
-                                    <span className={`hidden sm:inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${status.color}`}>
-                                        {status.label}
-                                    </span>
-                                    <Badge>{event.category}</Badge>
-                                    <Link
-                                        href={`/dashboard/events/${event.id}/analytics`}
-                                        className="hidden sm:flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 transition-colors px-2 py-1 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/30"
-                                        title="Analytics"
-                                    >
-                                        <RiBarChartLine className="h-3.5 w-3.5" /> Analytics
-                                    </Link>
-                                    <Link href={`/dashboard/events/${event.id}`}>
-                                        <RiArrowRightSLine className="h-4 w-4 text-zinc-400 group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors" />
-                                    </Link>
+                                <Icon className="h-4 w-4 text-ink-4" />
+                                <div>
+                                    <p className="font-display text-[26px] leading-none text-ink">{value}</p>
+                                    <p className="mt-1.5 text-[12px] text-ink-4">{label}</p>
                                 </div>
                             </div>
-                        );
-                    })}
-                </div>
+                        ))}
+                    </div>
+
+                    {upcoming.length > 0 && (
+                        <EventGroup title="Upcoming" count={upcoming.length} events={upcoming} />
+                    )}
+                    {past.length > 0 && (
+                        <EventGroup title="Past" count={past.length} events={past} muted />
+                    )}
+                </>
             )}
         </div>
     );
 }
 
+function EventGroup({
+    title, count, events, muted,
+}: { title: string; count: number; events: Event[]; muted?: boolean }) {
+    return (
+        <section className="flex flex-col gap-3">
+            <div className="flex items-center gap-2.5">
+                <h2 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-ink-4">{title}</h2>
+                <span className="text-[13px] text-ink-4">{count}</span>
+                <div className="ml-1 h-px flex-1 bg-line" />
+            </div>
+            <div className="stagger flex flex-col gap-2.5">
+                {events.map((event) => (
+                    <EventRow key={event.id} event={event} muted={muted} />
+                ))}
+            </div>
+        </section>
+    );
+}
 
+function EventRow({ event, muted }: { event: Event; muted?: boolean }) {
+    const { month, day } = dateParts(event.date);
+    const proximity = muted ? null : relativeDay(event.date, event.time);
+
+    return (
+        <div className="group relative flex items-center gap-4 rounded-[var(--radius-card)] border border-line bg-surface px-3 py-3 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-line-strong hover:shadow-md sm:px-4">
+            <Link
+                href={`/dashboard/events/${event.id}`}
+                className="flex min-w-0 flex-1 items-center gap-4"
+            >
+                {/* Thumbnail doubles as the date chip when no image exists. */}
+                <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[10px] bg-surface-2 sm:h-14 sm:w-14">
+                    {event.bannerImage ? (
+                        <Image
+                            src={event.bannerImage}
+                            alt=""
+                            fill
+                            className={`object-cover ${muted ? 'opacity-60 grayscale' : ''}`}
+                            sizes="56px"
+                        />
+                    ) : (
+                        <div className="flex h-full flex-col items-center justify-center">
+                            <span className="text-[9px] font-semibold uppercase leading-none tracking-wide text-accent">
+                                {month}
+                            </span>
+                            <span className="font-display text-[17px] leading-tight text-ink">{day}</span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                    <span className={`truncate font-medium ${muted ? 'text-ink-2' : 'text-ink'}`}>
+                        {event.title}
+                    </span>
+                    <div className="flex items-center gap-2.5 text-[12px] text-ink-4">
+                        <span className="shrink-0">{formatDate(event.date, 'medium')}</span>
+                        <span className="hidden min-w-0 items-center gap-1 sm:flex">
+                            <RiMapPinLine className="h-3 w-3 shrink-0" />
+                            <span className="truncate">{event.venue}</span>
+                        </span>
+                    </div>
+                </div>
+            </Link>
+
+            <div className="flex shrink-0 items-center gap-2">
+                {proximity && (
+                    <Badge variant="accent" className="hidden sm:inline-flex">{proximity}</Badge>
+                )}
+                <Badge variant="outline" className="hidden md:inline-flex">{event.category}</Badge>
+
+                <Link
+                    href={`/dashboard/events/${event.id}/analytics`}
+                    title="Analytics"
+                    aria-label={`Analytics for ${event.title}`}
+                    className="hidden h-8 w-8 items-center justify-center rounded-[var(--radius-control)] text-ink-4 transition-colors hover:bg-surface-2 hover:text-accent sm:flex"
+                >
+                    <RiBarChartLine className="h-4 w-4" />
+                </Link>
+                <Link
+                    href={`/dashboard/events/${event.id}`}
+                    aria-label={`Open ${event.title}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-control)] text-ink-4 transition-all group-hover:translate-x-0.5 group-hover:text-ink"
+                >
+                    <RiArrowRightSLine className="h-5 w-5" />
+                </Link>
+            </div>
+        </div>
+    );
+}

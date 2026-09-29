@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { EventForm } from '@/components/events/EventForm';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { useCreateEvent } from '@/lib/queries/events';
 
 export default function NewEventPage() {
@@ -12,20 +13,19 @@ export default function NewEventPage() {
     const handleSubmit = async (formData: FormData) => {
         try {
             const result = await createEvent(formData);
-            toast.success('Event created successfully');
-            router.push(`/dashboard/events/${result.event.id}`);
+            toast.success('Event created — add tickets next');
+            router.push(`/dashboard/events/${result.event.id}/tickets`);
         } catch (err: any) {
-            console.error('Error creating event:', err);
             toast.error(err?.message ?? 'Failed to create event');
         }
     };
 
     return (
-        <div className="flex flex-col gap-6 max-w-2xl">
-            <div>
-                <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Create event</h1>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Fill in the details for your new event</p>
-            </div>
+        <div className="flex max-w-3xl flex-col gap-7">
+            <PageHeader
+                title="Create event"
+                description="Tell people what's happening, when, and where."
+            />
             <EventForm onSubmit={handleSubmit} loading={isPending} />
         </div>
     );

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { RiCameraLine } from 'react-icons/ri';
 
 interface QrScannerProps {
     onScan: (code: string) => void;
@@ -17,7 +16,6 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
     useEffect(() => {
         firedRef.current = false;
         stoppingRef.current = false;
-
         let cancelled = false;
 
         (async () => {
@@ -39,18 +37,17 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
                         aspectRatio: 1,
                     },
                     (decoded: string) => {
-                        if (!firedRef.current && !stoppingRef.current) {
-                            firedRef.current = true;
-                            stoppingRef.current = true;
-                            scanner.stop().catch(() => { }).finally(() => onScan(decoded));
-                        }
+                        if (firedRef.current || stoppingRef.current) return;
+                        firedRef.current = true;
+                        stoppingRef.current = true;
+                        // Short haptic confirms the read before the network call.
+                        navigator.vibrate?.(40);
+                        scanner.stop().catch(() => {}).finally(() => onScan(decoded));
                     },
-                    () => { }
+                    () => {},
                 );
             } catch (err: any) {
-                if (!cancelled) {
-                    onError?.(err?.message ?? 'Camera not available');
-                }
+                if (!cancelled) onError?.(err?.message ?? 'Camera not available');
             }
         })();
 
@@ -58,36 +55,40 @@ export function QrScanner({ onScan, onError }: QrScannerProps) {
             cancelled = true;
             if (!stoppingRef.current) {
                 stoppingRef.current = true;
-                const inst = instanceRef.current;
-                if (inst) {
-                    inst.stop().catch(() => { });
-                    instanceRef.current = null;
-                }
+                instanceRef.current?.stop().catch(() => {});
+                instanceRef.current = null;
             }
         };
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div className="flex flex-col items-center gap-3">
-            <div className="relative w-full overflow-hidden rounded-xl bg-black" style={{ aspectRatio: '1' }}>
+            <div className="relative aspect-square w-full overflow-hidden rounded-[var(--radius-panel)] bg-black">
                 <div
                     id={containerId}
-                    className="w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover [&>img]:hidden"
+                    className="h-full w-full [&>img]:hidden [&>video]:h-full [&>video]:w-full [&>video]:object-cover"
                 />
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <div className="relative w-[68%] aspect-square">
-                        <span className="absolute top-0 left-0 h-7 w-7 rounded-tl-lg border-t-[3px] border-l-[3px] border-white" />
-                        <span className="absolute top-0 right-0 h-7 w-7 rounded-tr-lg border-t-[3px] border-r-[3px] border-white" />
-                        <span className="absolute bottom-0 left-0 h-7 w-7 rounded-bl-lg border-b-[3px] border-l-[3px] border-white" />
-                        <span className="absolute bottom-0 right-0 h-7 w-7 rounded-br-lg border-b-[3px] border-r-[3px] border-white" />
-                        <span className="absolute left-2 right-2 top-1/2 h-0.5 -translate-y-1/2 bg-indigo-400/70 animate-pulse" />
+
+                {/* Dim everything outside the reticle so the eye goes to it. */}
+                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute inset-0 bg-black/45" />
+                    <div className="absolute left-1/2 top-1/2 aspect-square w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-[18px] bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,.45)]" />
+
+                    <div className="absolute left-1/2 top-1/2 aspect-square w-[72%] -translate-x-1/2 -translate-y-1/2">
+                        {[
+                            'top-0 left-0 rounded-tl-[14px] border-t-[3px] border-l-[3px]',
+                            'top-0 right-0 rounded-tr-[14px] border-t-[3px] border-r-[3px]',
+                            'bottom-0 left-0 rounded-bl-[14px] border-b-[3px] border-l-[3px]',
+                            'bottom-0 right-0 rounded-br-[14px] border-b-[3px] border-r-[3px]',
+                        ].map((pos) => (
+                            <span key={pos} className={`absolute h-8 w-8 border-accent ${pos}`} />
+                        ))}
+                        <span className="animate-laser absolute left-3 right-3 h-0.5 rounded-full bg-accent shadow-[0_0_12px_var(--accent)]" />
                     </div>
                 </div>
             </div>
-            <p className="text-xs text-zinc-400 flex items-center gap-1.5">
-                <RiCameraLine className="h-3.5 w-3.5" />
-                Point camera at the ticket QR code
-            </p>
+
+            <p className="text-[13px] text-ink-3">Point the camera at the ticket QR code</p>
         </div>
     );
 }

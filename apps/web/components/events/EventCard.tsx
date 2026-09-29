@@ -1,74 +1,101 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { RiCalendarLine, RiMapPinLine } from 'react-icons/ri';
-import { Badge } from '../ui/Badge';
+import { RiMapPinLine, RiTicket2Line } from 'react-icons/ri';
+import { cn } from '@/lib/cn';
+import { dateParts, formatTime, relativeDay, isPast } from '@/lib/format';
 import type { Event } from '@/lib/types';
 
 interface EventCardProps {
     event: Event;
+    /** Index in a grid — drives the entrance stagger. */
+    index?: number;
 }
 
-function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-function formatTime(timeStr: string) {
-    const [h, m] = timeStr.split(':');
-    const d = new Date();
-    d.setHours(Number(h), Number(m));
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-}
-
-function priceLabel(tickets?: Event['tickets']) {
+function priceLabel(tickets?: Event['tickets']): string | null {
     if (!tickets || tickets.length === 0) return null;
-    const prices = tickets.map((t) => Number(t.price));
+    const prices = tickets.map((t) => Number(t.price)).filter(Number.isFinite);
+    if (prices.length === 0) return null;
     const min = Math.min(...prices);
-    if (min === 0) return 'Free';
-    return `From $${min.toFixed(2)}`;
+    return min === 0 ? 'Free' : `From $${min.toFixed(2)}`;
 }
 
-export function EventCard({ event }: EventCardProps) {
+export function EventCard({ event, index = 0 }: EventCardProps) {
+    const { month, day } = dateParts(event.date);
+    const price = priceLabel(event.tickets);
+    const past = isPast(event.date, event.time);
+    const soon = !past && relativeDay(event.date, event.time);
+
     return (
-        <Link href={`/events/${event.id}`} className="group flex flex-col rounded-xl border border-zinc-200 bg-white overflow-hidden hover:border-zinc-300 hover:shadow-md transition-all duration-200 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 shadow-sm">
-            <div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+        <Link
+            href={`/events/${event.id}`}
+            style={{ animationDelay: `${Math.min(index, 11) * 40}ms` }}
+            className={cn(
+                'group relative flex flex-col overflow-hidden animate-rise',
+                'rounded-[var(--radius-card)] border border-line bg-surface',
+                'transition-[transform,box-shadow,border-color] duration-300 ease-[var(--ease-out-quint)]',
+                'hover:-translate-y-1 hover:border-line-strong hover:shadow-lg',
+            )}
+        >
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-2">
                 {event.bannerImage ? (
-                    <>
-                        <Image
-                            src={event.bannerImage}
-                            alt={event.title}
-                            fill
-                            className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                    </>
+                    <Image
+                        src={event.bannerImage}
+                        alt=""
+                        fill
+                        className="object-cover transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:scale-[1.04]"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
                 ) : (
-                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30">
-                        <RiCalendarLine className="h-10 w-10 text-indigo-300 dark:text-indigo-700" />
+                    <div className="flex h-full items-center justify-center bg-surface-3">
+                        <RiTicket2Line className="h-9 w-9 text-ink-4/50" />
                     </div>
                 )}
-                <div className="absolute top-2.5 left-2.5">
-                    <Badge>{event.category}</Badge>
+
+                {/* Scrim anchors the date block regardless of image brightness. */}
+                <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink/45 to-transparent" />
+
+                {/* Calendar-block motif — the card's signature element. */}
+                <div className="absolute left-3 top-3 flex h-[46px] w-[46px] flex-col items-center justify-center rounded-[10px] bg-surface/95 shadow-md backdrop-blur-sm">
+                    <span className="text-[9px] font-semibold uppercase leading-none tracking-[0.08em] text-accent">
+                        {month}
+                    </span>
+                    <span className="font-display text-[19px] leading-tight text-ink">{day}</span>
                 </div>
+
+                {past && (
+                    <span className="absolute right-3 top-3 rounded-full bg-ink/75 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-white backdrop-blur-sm">
+                        Past
+                    </span>
+                )}
+                {!past && price && (
+                    <span className="absolute bottom-3 right-3 rounded-full bg-surface/95 px-2.5 py-1 text-[11px] font-semibold text-ink shadow-sm backdrop-blur-sm">
+                        {price}
+                    </span>
+                )}
             </div>
 
-            <div className="flex flex-col gap-2.5 p-4">
-                <h3 className="font-semibold text-zinc-900 dark:text-zinc-50 line-clamp-2 leading-snug">{event.title}</h3>
-                <div className="flex flex-col gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+            <div className="flex flex-1 flex-col gap-2 p-4">
+                <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.08em] text-ink-4">
+                    <span className="truncate">{event.category}</span>
+                    {soon && (
+                        <>
+                            <span className="h-[3px] w-[3px] shrink-0 rounded-full bg-ink-4" />
+                            <span className="shrink-0 text-accent-text normal-case tracking-normal">{soon}</span>
+                        </>
+                    )}
+                </div>
+
+                <h3 className="font-display text-[19px] leading-[1.25] text-ink line-clamp-2 transition-colors group-hover:text-accent-text">
+                    {event.title}
+                </h3>
+
+                <div className="mt-auto flex flex-col gap-1.5 pt-1.5 text-[13px] text-ink-3">
                     <span className="flex items-center gap-1.5">
-                        <RiCalendarLine className="h-3.5 w-3.5 shrink-0 text-indigo-400" />
-                        {formatDate(event.date)} · {formatTime(event.time)}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                        <RiMapPinLine className="h-3.5 w-3.5 shrink-0 text-indigo-400" />
+                        <RiMapPinLine className="h-3.5 w-3.5 shrink-0 text-ink-4" />
                         <span className="truncate">{event.venue}, {event.state}</span>
                     </span>
+                    <span className="text-ink-4">{formatTime(event.time)}</span>
                 </div>
-                {event.tickets && (
-                    <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">
-                        {priceLabel(event.tickets)}
-                    </p>
-                )}
             </div>
         </Link>
     );

@@ -1,0 +1,229 @@
+/* Shared design tokens — imported by every eventza frontend.
+   Edit here, never in an app's globals.css. */
+
+:root {
+    /* Warm neutral ramp — paper through ink */
+    --paper:        #FBFAF8;
+    --surface:      #FFFFFF;
+    --surface-2:    #F5F3EF;
+    --surface-3:    #EDEAE4;
+    --line:         #E4E0D8;
+    --line-strong:  #D3CEC2;
+
+    --ink:          #171614;
+    --ink-2:        #3D3A35;
+    --ink-3:        #6B665C;
+    --ink-4:        #9A9488;
+
+    /* Ember — the single brand accent */
+    --accent:       #C2410C;
+    --accent-hover: #9A3412;
+    --accent-soft:  #FDF0E7;
+    --accent-line:  #F5D3BC;
+    --accent-text:  #9A3412;
+
+    /* Semantic */
+    --success:      #15803D;
+    --success-soft: #EAF6EE;
+    --success-line: #C2E3CE;
+    --warning:      #A16207;
+    --warning-soft: #FDF6E3;
+    --warning-line: #EEDFAF;
+    --danger:       #B91C1C;
+    --danger-soft:  #FDEDED;
+    --danger-line:  #F3C9C9;
+
+    --focus:        #C2410C;
+
+    /* Elevation — warm-tinted, never neutral black */
+    --shadow-sm: 0 1px 2px rgba(23, 22, 20, .05);
+    --shadow-md: 0 2px 4px rgba(23, 22, 20, .04), 0 4px 12px rgba(23, 22, 20, .06);
+    --shadow-lg: 0 4px 8px rgba(23, 22, 20, .04), 0 12px 32px rgba(23, 22, 20, .10);
+    --shadow-xl: 0 8px 16px rgba(23, 22, 20, .06), 0 24px 56px rgba(23, 22, 20, .14);
+}
+
+:root.dark {
+    --paper:        #121110;
+    --surface:      #1A1917;
+    --surface-2:    #232220;
+    --surface-3:    #2D2B28;
+    --line:         #302E2B;
+    --line-strong:  #423F3A;
+
+    --ink:          #F7F5F2;
+    --ink-2:        #D6D2CB;
+    --ink-3:        #A39D93;
+    --ink-4:        #6F6A61;
+
+    --accent:       #F97316;
+    --accent-hover: #FB923C;
+    --accent-soft:  #2A1810;
+    --accent-line:  #45260F;
+    --accent-text:  #FDBA74;
+
+    --success:      #4ADE80;
+    --success-soft: #122019;
+    --success-line: #1E3A2A;
+    --warning:      #FBBF24;
+    --warning-soft: #241D0E;
+    --warning-line: #3D3116;
+    --danger:       #F87171;
+    --danger-soft:  #251413;
+    --danger-line:  #45201F;
+
+    --focus:        #F97316;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, .3), 0 4px 12px rgba(0, 0, 0, .4);
+    --shadow-lg: 0 4px 8px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .5);
+    --shadow-xl: 0 8px 16px rgba(0, 0, 0, .35), 0 24px 56px rgba(0, 0, 0, .55);
+}
+
+@theme inline {
+    --font-sans:    var(--font-geist-sans);
+    --font-display: var(--font-display);
+    --font-mono:    var(--font-geist-mono);
+
+    --color-paper:       var(--paper);
+    --color-surface:     var(--surface);
+    --color-surface-2:   var(--surface-2);
+    --color-surface-3:   var(--surface-3);
+    --color-line:        var(--line);
+    --color-line-strong: var(--line-strong);
+
+    --color-ink:   var(--ink);
+    --color-ink-2: var(--ink-2);
+    --color-ink-3: var(--ink-3);
+    --color-ink-4: var(--ink-4);
+
+    --color-accent:       var(--accent);
+    --color-accent-hover: var(--accent-hover);
+    --color-accent-soft:  var(--accent-soft);
+    --color-accent-line:  var(--accent-line);
+    --color-accent-text:  var(--accent-text);
+
+    --color-success:      var(--success);
+    --color-success-soft: var(--success-soft);
+    --color-success-line: var(--success-line);
+    --color-warning:      var(--warning);
+    --color-warning-soft: var(--warning-soft);
+    --color-warning-line: var(--warning-line);
+    --color-danger:       var(--danger);
+    --color-danger-soft:  var(--danger-soft);
+    --color-danger-line:  var(--danger-line);
+
+    --shadow-sm: var(--shadow-sm);
+    --shadow-md: var(--shadow-md);
+    --shadow-lg: var(--shadow-lg);
+    --shadow-xl: var(--shadow-xl);
+
+    /* Radii — 3 steps only: controls, cards, pills */
+    --radius-control: 8px;
+    --radius-card:    14px;
+    --radius-panel:   20px;
+
+    /* Motion — one easing family, three durations */
+    --ease-out-quint: cubic-bezier(.22, 1, .36, 1);
+    --ease-spring:    cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* ───────────────────────────────────────────────────────────────
+   Motion
+   Entrance animations are opt-in via .animate-* and respect
+   prefers-reduced-motion globally at the bottom of this file.
+   ─────────────────────────────────────────────────────────────── */
+@keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes scale-in {
+    from { opacity: 0; transform: scale(.96) translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes shimmer {
+    from { background-position: 200% 0; }
+    to   { background-position: -200% 0; }
+}
+@keyframes sweep {
+    0%   { transform: translateY(-120%); opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { transform: translateY(120%); opacity: 0; }
+}
+@keyframes pop {
+    0%   { transform: scale(.8); opacity: 0; }
+    60%  { transform: scale(1.06); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-rise     { animation: rise .5s var(--ease-out-quint) both; }
+.animate-fade     { animation: fade .4s var(--ease-out-quint) both; }
+.animate-scale-in { animation: scale-in .28s var(--ease-out-quint) both; }
+.animate-overlay  { animation: overlay-in .2s linear both; }
+.animate-sweep    { animation: sweep 2.4s var(--ease-out-quint) infinite; }
+.animate-pop      { animation: pop .4s var(--ease-spring) both; }
+
+/* Stagger children: set --i on each child, or use the nth-child
+   ladder below for lists up to 12 items. */
+.stagger > *          { animation: rise .5s var(--ease-out-quint) both; }
+.stagger > *:nth-child(1)  { animation-delay: .02s; }
+.stagger > *:nth-child(2)  { animation-delay: .06s; }
+.stagger > *:nth-child(3)  { animation-delay: .10s; }
+.stagger > *:nth-child(4)  { animation-delay: .14s; }
+.stagger > *:nth-child(5)  { animation-delay: .18s; }
+.stagger > *:nth-child(6)  { animation-delay: .22s; }
+.stagger > *:nth-child(7)  { animation-delay: .26s; }
+.stagger > *:nth-child(8)  { animation-delay: .30s; }
+.stagger > *:nth-child(9)  { animation-delay: .34s; }
+.stagger > *:nth-child(10) { animation-delay: .38s; }
+.stagger > *:nth-child(11) { animation-delay: .42s; }
+.stagger > *:nth-child(12) { animation-delay: .46s; }
+
+/* Skeleton placeholder — warm shimmer, not grey pulse */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--surface-2) 25%,
+        var(--surface-3) 37%,
+        var(--surface-2) 63%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+    border-radius: 6px;
+}
+
+/* Fine paper grain for large accent surfaces (hero, auth aside).
+   Pure CSS so it costs no request. */
+.grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hairline rule that fades at both ends — used as section divider */
+.rule-fade {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line) 15%, var(--line) 85%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .skeleton { animation: none; background: var(--surface-2); }
+}

@@ -55,43 +55,59 @@ pnpm install
 
 ### Environment variables
 
+Each app ships a `.env.example` listing every key it reads. Copy it and fill in
+the values:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+cp apps/scanner/.env.example apps/scanner/.env
+```
+
 **`apps/api/.env`**
 
 ```env
-PORT=3001
-
+# Database (Postgres). SSL is required — see src/config/database.ts
 DB_HOST=
 DB_PORT=5432
 DB_NAME=
 DB_USER=
 DB_PASSWORD=
 
-JWT_SECRET=
-JWT_REFRESH_SECRET=
+# Auth
+USER_ACCESS_TOKEN_SECRET=
+USER_REFRESH_TOKEN_SECRET=
+SCANNER_ACCESS_TOKEN_SECRET=
 
-SMTP_HOST=
-SMTP_PORT=
-SMTP_USER=
-SMTP_PASS=
+# Email (Resend)
+RESEND_API_KEY=
 EMAIL_FROM=
 
-AWS_REGION=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-S3_BUCKET_NAME=
+# Image uploads (Cloudinary)
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 
+# Payments (Stripe)
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
+
+# CORS / links back to the web app
+FRONTEND_URL=
 ```
 
-**`apps/web/.env.local`**
+The API refuses to start if any of the five `DB_` values are missing.
+
+**`apps/web/.env`**
 
 ```env
+API_URL=http://localhost:3001
 NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_SCANNER_URL=http://localhost:3002
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 ```
 
-**`apps/scanner/.env.local`**
+**`apps/scanner/.env`**
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001

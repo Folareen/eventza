@@ -38,17 +38,24 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 const PORT = process.env.PORT || 3001;
 
-function keepAlive() {
+function keepAlive(attempt = 1) {
     const selfUrl = process.env.SELF_URL;
     if (!selfUrl) return;
 
     const url = new URL('/ping', selfUrl);
     const client = url.protocol === 'https:' ? https : http;
+    const maxAttempts = 3;
 
-    client.get(url.toString(), (res) => {
+    client.get(url.toString(), { timeout: 10000 }, (res) => {
         console.log(`[keep-alive] ping ${res.statusCode}`);
+        res.resume();
+    }).on('timeout', function (this: http.ClientRequest) {
+        this.destroy();
     }).on('error', (err) => {
-        console.error('[keep-alive] ping failed:', err.message);
+        console.error(`[keep-alive] ping failed (attempt ${attempt}/${maxAttempts}):`, err.message);
+        if (attempt < maxAttempts) {
+            setTimeout(() => keepAlive(attempt + 1), 5000);
+        }
     });
 }
 
@@ -59,7 +66,7 @@ function keepAlive() {
 
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
-            setInterval(keepAlive, 14 * 60 * 1000);
+            setInterval(() => keepAlive(), 8 * 60 * 1000);
         });
     } catch (err) {
         console.error('Failed to start server:', err);

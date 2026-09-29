@@ -1,7 +1,50 @@
 @import "tailwindcss";
+@import "@eventza/shared/styles/tokens.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-body {
-    -webkit-font-smoothing: antialiased;
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        /* The scanner is a single-purpose tool: never bounce-scroll. */
+        overscroll-behavior: none;
+    }
+
+    body {
+        font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* Door staff hold this one-handed; stop accidental text selection. */
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Inputs still need selection. */
+    input, textarea { -webkit-user-select: text; user-select: text; }
+
+    .font-display {
+        font-family: var(--font-display), Georgia, serif;
+        font-weight: 400;
+        letter-spacing: -0.015em;
+    }
+
+    :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 }
+
+/* Full-bleed result flash — the scanner's primary feedback channel.
+   Large, colour-coded, readable at arm's length in a dark venue. */
+@keyframes result-in {
+    from { opacity: 0; transform: scale(.94); }
+    to   { opacity: 1; transform: none; }
+}
+.animate-result { animation: result-in .32s var(--ease-spring) both; }
+
+/* Laser line travelling down the QR viewport. */
+@keyframes laser {
+    0%   { top: 4%;  opacity: 0; }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { top: 96%; opacity: 0; }
+}
+.animate-laser { animation: laser 2.2s ease-in-out infinite; }

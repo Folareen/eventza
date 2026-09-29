@@ -1,8 +1,10 @@
 'use client';
 
-import { use } from 'react';
+import { use, useMemo } from 'react';
 import { OrdersTable } from '@/components/events/OrdersTable';
-import { Spinner } from '@/components/ui/Spinner';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { formatMoney } from '@/lib/format';
 import { useEventOrders } from '@/lib/queries/orders';
 import { useTickets } from '@/lib/queries/tickets';
 
@@ -12,19 +14,38 @@ export default function OrdersPage({ params }: { params: Promise<{ id: string }>
     const { data: ordersData, isLoading } = useEventOrders(eventId);
     const { data: ticketsData } = useTickets(eventId);
 
-    const orders = ordersData?.orders ?? [];
-    const ticketNames = Object.fromEntries((ticketsData?.tickets ?? []).map((t) => [t.id, t.name]));
+    const orders = useMemo(() => ordersData?.orders ?? [], [ordersData]);
+    const ticketNames = useMemo(
+        () => Object.fromEntries((ticketsData?.tickets ?? []).map((t) => [t.id, t.name])),
+        [ticketsData],
+    );
+
+    const revenue = useMemo(
+        () => orders
+            .filter((o) => o.status === 'confirmed')
+            .reduce((sum, o) => sum + Number(o.amount || 0), 0),
+        [orders],
+    );
 
     return (
-        <div className="flex flex-col gap-6">
-            <div>
-                <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Orders</h1>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-                    {orders.length > 0 ? `${orders.length} order${orders.length !== 1 ? 's' : ''}` : 'No orders yet'}
-                </p>
-            </div>
-            {isLoading ? <div className="flex justify-center py-16"><Spinner size="lg" /></div>
-                : <OrdersTable orders={orders} ticketNames={ticketNames} />}
+        <div className="flex flex-col gap-7">
+            <PageHeader
+                title="Orders"
+                description={
+                    orders.length > 0
+                        ? `${orders.length} ${orders.length === 1 ? 'order' : 'orders'} · ${formatMoney(revenue)} confirmed revenue`
+                        : 'Every booking for this event shows up here.'
+                }
+            />
+
+            {isLoading ? (
+                <div className="flex flex-col gap-4">
+                    <Skeleton className="h-9 w-72" />
+                    <Skeleton className="h-[320px] rounded-[var(--radius-card)]" />
+                </div>
+            ) : (
+                <OrdersTable orders={orders} ticketNames={ticketNames} />
+            )}
         </div>
     );
 }

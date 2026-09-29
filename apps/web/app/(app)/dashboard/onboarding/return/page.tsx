@@ -1,24 +1,25 @@
 import Link from 'next/link';
 import { RiCheckLine } from 'react-icons/ri';
+import { Button } from '@/components/ui/Button';
 
 export default function OnboardingReturnPage() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
-                <RiCheckLine className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
-            </div>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center animate-rise">
+            <span className="flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-success-soft">
+                <RiCheckLine className="h-8 w-8 text-success" />
+            </span>
             <div>
-                <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Onboarding complete</h1>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 max-w-sm">
+                <h1 className="font-display text-[30px] leading-tight text-ink">Onboarding complete</h1>
+                <p className="mx-auto mt-2.5 max-w-sm text-[14px] leading-relaxed text-ink-3">
                     Your Stripe account is set up. You can now receive payouts from ticket sales.
                 </p>
             </div>
-            <Link
-                href="/dashboard/account"
-                className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
-            >
-                Back to account
-            </Link>
+            <div className="flex flex-wrap justify-center gap-2">
+                <Button asChild><Link href="/dashboard/account">Back to account</Link></Button>
+                <Button variant="secondary" asChild>
+                    <Link href="/dashboard/events">My events</Link>
+                </Button>
+            </div>
         </div>
     );
 }

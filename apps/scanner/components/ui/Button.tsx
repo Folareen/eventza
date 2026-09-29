@@ -1,37 +1,50 @@
-import React, { forwardRef } from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/cn';
 import { Spinner } from './Spinner';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
-    size?: 'sm' | 'md' | 'lg';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Size = 'sm' | 'md' | 'lg';
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+    variant?: Variant;
+    size?: Size;
     loading?: boolean;
 }
 
-const variants = {
-    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 border-transparent disabled:opacity-50',
-    secondary: 'bg-white text-zinc-900 border-zinc-200 hover:bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-700',
-    ghost: 'bg-transparent text-zinc-600 border-transparent hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800',
-    danger: 'bg-red-600 text-white hover:bg-red-700 border-transparent disabled:opacity-50',
+const variantClasses: Record<Variant, string> = {
+    primary:   'bg-accent text-white shadow-sm hover:bg-accent-hover',
+    secondary: 'border border-line-strong bg-surface text-ink-2 shadow-sm hover:bg-surface-2',
+    ghost:     'text-ink-3 hover:bg-surface-2 hover:text-ink',
+    danger:    'bg-danger text-white shadow-sm hover:brightness-110',
 };
 
-const sizes = {
-    sm: 'h-8 px-3 py-1.5 text-xs',
-    md: 'h-10 px-4 py-2 text-sm',
-    lg: 'h-11 px-5 py-2.5 text-base',
+/** Taller than the web equivalents: these are tapped with a thumb,
+ *  often in a hurry and sometimes in the dark. */
+const sizeClasses: Record<Size, string> = {
+    sm: 'h-9 px-3.5 text-[13px] gap-1.5',
+    md: 'h-11 px-4 text-sm gap-2',
+    lg: 'h-14 px-6 text-base gap-2',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ variant = 'primary', size = 'md', loading, disabled, children, className = '', ...props }, ref) => (
+    ({ variant = 'primary', size = 'md', loading, disabled, className, children, ...props }, ref) => (
         <button
             ref={ref}
             disabled={disabled || loading}
-            className={`inline-flex items-center justify-center gap-2 rounded-lg border font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-950 cursor-pointer disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
+            className={cn(
+                'inline-flex select-none items-center justify-center rounded-[var(--radius-control)] font-medium',
+                'transition-[background-color,border-color,color,box-shadow,transform] duration-150',
+                'cursor-pointer active:scale-[.98]',
+                'disabled:pointer-events-none disabled:opacity-45',
+                variantClasses[variant],
+                sizeClasses[size],
+                className,
+            )}
             {...props}
         >
             {loading && <Spinner size="sm" />}
             {children}
         </button>
-    )
+    ),
 );
-
 Button.displayName = 'Button';

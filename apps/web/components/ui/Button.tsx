@@ -1,9 +1,10 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { Slot } from '@radix-ui/react-slot';
+import { cn } from '@/lib/cn';
 import { Spinner } from './Spinner';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-ghost';
-type Size = 'sm' | 'md' | 'lg' | 'icon';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'subtle' | 'danger' | 'danger-ghost';
+type Size = 'sm' | 'md' | 'lg' | 'icon' | 'icon-sm';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: Variant;
@@ -14,36 +15,49 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
     primary:
-        'bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50',
+        'bg-accent text-white shadow-sm hover:bg-accent-hover active:shadow-none',
     secondary:
-        'border border-zinc-300 text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800 disabled:opacity-50',
+        'border border-line-strong bg-surface text-ink-2 shadow-sm hover:bg-surface-2 hover:border-ink-4 active:shadow-none',
     ghost:
-        'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 disabled:opacity-50',
+        'text-ink-3 hover:bg-surface-2 hover:text-ink',
+    subtle:
+        'bg-surface-2 text-ink-2 hover:bg-surface-3',
     danger:
-        'bg-red-600 text-white hover:bg-red-700 disabled:opacity-50',
+        'bg-danger text-white shadow-sm hover:brightness-110 active:shadow-none',
     'danger-ghost':
-        'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 disabled:opacity-50',
+        'text-danger hover:bg-danger-soft',
 };
 
 const sizeClasses: Record<Size, string> = {
-    sm: 'h-8 px-3.5 text-sm',
-    md: 'h-10 px-4 text-sm',
-    lg: 'h-11 px-5 text-base',
-    icon: 'h-9 w-9 p-0 text-sm',
+    sm: 'h-8 px-3 text-[13px] gap-1.5 rounded-[var(--radius-control)]',
+    md: 'h-10 px-4 text-sm gap-2 rounded-[var(--radius-control)]',
+    lg: 'h-12 px-6 text-[15px] gap-2 rounded-[var(--radius-control)]',
+    icon: 'h-10 w-10 p-0 rounded-[var(--radius-control)]',
+    'icon-sm': 'h-8 w-8 p-0 rounded-[var(--radius-control)]',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ variant = 'primary', size = 'md', loading, disabled, asChild, className = '', children, ...props }, ref) => {
-        const classes = `inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 cursor-pointer disabled:cursor-not-allowed ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+    ({ variant = 'primary', size = 'md', loading, disabled, asChild, className, children, ...props }, ref) => {
         const Comp = asChild ? Slot : 'button';
         return (
             <Comp
                 ref={ref}
-                disabled={!asChild ? (disabled || loading) : undefined}
-                className={classes}
+                disabled={!asChild ? disabled || loading : undefined}
+                data-loading={loading ? '' : undefined}
+                className={cn(
+                    'relative inline-flex select-none items-center justify-center font-medium whitespace-nowrap',
+                    'transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out',
+                    'cursor-pointer active:translate-y-px',
+                    'disabled:pointer-events-none disabled:opacity-45',
+                    variantClasses[variant],
+                    sizeClasses[size],
+                    className,
+                )}
                 {...props}
             >
-                {asChild ? children : (
+                {asChild ? (
+                    children
+                ) : (
                     <>
                         {loading && <Spinner size="sm" />}
                         {children}

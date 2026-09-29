@@ -1,50 +1,50 @@
 import Link from 'next/link';
-import { RiCalendarEventLine, RiTwitterXLine, RiInstagramLine, RiLinkedinLine } from 'react-icons/ri';
+import { RiTwitterXLine, RiInstagramLine, RiLinkedinLine } from 'react-icons/ri';
+import { Logo } from './Logo';
 
 const LINKS = {
     Product: [
-        { href: '/', label: 'Browse Events' },
-        { href: '/auth/register', label: 'Host an Event' },
-        { href: '/auth/login', label: 'Sign In' },
+        { href: '/', label: 'Discover events' },
+        { href: '/auth/register', label: 'Host an event' },
+        { href: '/dashboard/events', label: 'Dashboard' },
     ],
     Support: [
-        { href: '#', label: 'Help Centre' },
-        { href: '#', label: 'Contact Us' },
-        { href: '#', label: 'Refund Policy' },
+        { href: '#', label: 'Help centre' },
+        { href: '#', label: 'Contact us' },
+        { href: '#', label: 'Refund policy' },
     ],
     Legal: [
-        { href: '#', label: 'Privacy Policy' },
-        { href: '#', label: 'Terms of Service' },
-        { href: '#', label: 'Cookie Policy' },
+        { href: '#', label: 'Privacy policy' },
+        { href: '#', label: 'Terms of service' },
+        { href: '#', label: 'Cookie policy' },
     ],
 };
 
+const SOCIALS = [
+    { href: '#', icon: RiTwitterXLine, label: 'X' },
+    { href: '#', icon: RiInstagramLine, label: 'Instagram' },
+    { href: '#', icon: RiLinkedinLine, label: 'LinkedIn' },
+];
+
 export function Footer() {
     return (
-        <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-auto">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 pb-8">
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
+        <footer className="mt-auto border-t border-line bg-surface">
+            <div className="mx-auto max-w-[1240px] px-4 sm:px-6 pt-14 pb-8">
+                <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 sm:gap-8">
                     <div className="col-span-2 sm:col-span-1">
-                        <Link href="/" className="inline-flex items-center gap-2 font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-3">
-                            <RiCalendarEventLine className="h-5 w-5 text-indigo-600" />
-                            eventza
-                        </Link>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-[200px]">
+                        <Logo />
+                        <p className="mt-3.5 max-w-[210px] text-sm leading-relaxed text-ink-3">
                             Discover and host events that bring people together.
                         </p>
-                        <div className="flex items-center gap-3 mt-5">
-                            {[
-                                { href: '#', icon: RiTwitterXLine, label: 'Twitter' },
-                                { href: '#', icon: RiInstagramLine, label: 'Instagram' },
-                                { href: '#', icon: RiLinkedinLine, label: 'LinkedIn' },
-                            ].map(({ href, icon: Icon, label }) => (
+                        <div className="mt-5 flex items-center gap-2">
+                            {SOCIALS.map(({ href, icon: Icon, label }) => (
                                 <a
                                     key={label}
                                     href={href}
                                     aria-label={label}
-                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 hover:border-zinc-400 dark:hover:text-zinc-100 dark:hover:border-zinc-600 transition-colors"
+                                    className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-4 transition-colors hover:border-ink-4 hover:text-ink"
                                 >
-                                    <Icon className="h-4 w-4" />
+                                    <Icon className="h-[15px] w-[15px]" />
                                 </a>
                             ))}
                         </div>
@@ -52,13 +52,15 @@ export function Footer() {
 
                     {Object.entries(LINKS).map(([title, links]) => (
                         <div key={title}>
-                            <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-4">{title}</h3>
-                            <ul className="flex flex-col gap-2.5">
+                            <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-4">
+                                {title}
+                            </h3>
+                            <ul className="flex flex-col gap-3">
                                 {links.map(({ href, label }) => (
                                     <li key={label}>
                                         <Link
                                             href={href}
-                                            className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                                            className="text-sm text-ink-3 transition-colors hover:text-ink"
                                         >
                                             {label}
                                         </Link>
@@ -69,12 +71,13 @@ export function Footer() {
                     ))}
                 </div>
 
-                <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500">© {new Date().getFullYear()} eventza. All rights reserved.</p>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500">Made with ♥ for event creators everywhere.</p>
+                <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-line pt-6 sm:flex-row">
+                    <p className="text-xs text-ink-4">
+                        © {new Date().getFullYear()} eventza. All rights reserved.
+                    </p>
+                    <p className="text-xs text-ink-4">Built for event creators everywhere.</p>
                 </div>
             </div>
         </footer>
     );
 }
-
