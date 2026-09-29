@@ -22,7 +22,7 @@ export function TicketCard({ ticket, onEdit, onDelete }: TicketCardProps) {
 
     return (
         <div className="group relative flex flex-col gap-4 overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface p-5 transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-sm">
-            {/* Perforated left edge — the ticket-stub motif. */}
+            {/* Perforated left edge, the ticket-stub motif. */}
             <span
                 className="pointer-events-none absolute inset-y-0 left-0 w-[3px]"
                 style={{

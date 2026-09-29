@@ -32,7 +32,7 @@
     :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 }
 
-/* Full-bleed result flash — the scanner's primary feedback channel.
+/* Full-bleed result flash, the scanner's primary feedback channel.
    Large, colour-coded, readable at arm's length in a dark venue. */
 @keyframes result-in {
     from { opacity: 0; transform: scale(.94); }

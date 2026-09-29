@@ -62,7 +62,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
 
     return (
         <main className="flex flex-1 flex-col">
-            {/* ── Banner ───────────────────────────────────────────── */}
+            {/* Banner */}
             <div className="relative h-[240px] w-full overflow-hidden bg-surface-2 sm:h-[340px] lg:h-[400px]">
                 {event.bannerImage ? (
                     <>
@@ -118,7 +118,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                 </div>
             </div>
 
-            {/* ── Body ─────────────────────────────────────────────── */}
+            {/* Body */}
             <div className="mx-auto grid w-full max-w-[1240px] flex-1 gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_380px] lg:gap-14">
                 <div className="flex min-w-0 flex-col gap-10">
                     {/* Fact strip */}
@@ -142,7 +142,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                     </section>
                 </div>
 
-                {/* ── Ticket panel ─────────────────────────────────── */}
+                {/* Ticket panel */}
                 <aside className="lg:sticky lg:top-24 lg:self-start">
                     <div className="overflow-hidden rounded-[var(--radius-panel)] border border-line bg-surface shadow-sm">
                         <div className="flex items-center gap-2 border-b border-line px-5 py-4">

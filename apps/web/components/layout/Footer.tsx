@@ -5,7 +5,8 @@ import { Logo } from './Logo';
 const LINKS = {
     Product: [
         { href: '/', label: 'Discover events' },
-        { href: '/auth/register', label: 'Host an event' },
+        { href: '/host', label: 'Host an event' },
+        { href: '/pricing', label: 'Pricing' },
         { href: '/dashboard/events', label: 'Dashboard' },
     ],
     Support: [

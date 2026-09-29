@@ -218,7 +218,7 @@ export default function AccountPage() {
                             <p className="text-[13px] text-ink-2">
                                 {payoutsReady
                                     ? 'Your Stripe account is connected and ready to receive payouts.'
-                                    : 'Onboarding is incomplete — you cannot receive payouts yet.'}
+                                    : 'Onboarding is incomplete, you cannot receive payouts yet.'}
                             </p>
                         </div>
                         <div className="flex flex-wrap gap-2">

@@ -15,7 +15,7 @@ const display = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-    title: { default: "eventza — find events worth your time", template: "%s · eventza" },
+    title: { default: "eventza: find events worth your time", template: "%s · eventza" },
     description: "Discover events near you, or host your own. Browse, book, and go.",
 };
 

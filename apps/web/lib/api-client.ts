@@ -19,7 +19,7 @@ export class ApiError extends Error {
         const base = (data.error as string) ?? 'Request failed';
         const details = data.details as Array<{ field: string; message: string }> | undefined;
         const message = details?.length
-            ? `${base}: ${details.map((d) => `${d.field ? d.field + ' — ' : ''}${d.message}`).join(', ')}`
+            ? `${base}: ${details.map((d) => `${d.field ? d.field + ': ' : ''}${d.message}`).join(', ')}`
             : base;
         super(message);
     }

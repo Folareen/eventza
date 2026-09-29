@@ -65,7 +65,7 @@ export function isPast(date: string, time?: string): boolean {
     return d.getTime() <= Date.now();
 }
 
-/** "in 3 days" / "2 weeks ago" — relative labels for event proximity. */
+/** "in 3 days" / "2 weeks ago", relative labels for event proximity. */
 export function relativeDay(date: string, time?: string): string {
     const target = new Date(`${date.slice(0, 10)}T${(time ?? '00:00').slice(0, 5)}`);
     if (Number.isNaN(target.getTime())) return '';

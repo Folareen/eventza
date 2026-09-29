@@ -4,7 +4,7 @@ interface PageHeaderProps {
     title: string;
     description?: string;
     action?: React.ReactNode;
-    /** Rendered above the title — breadcrumbs or an eyebrow label. */
+    /** Rendered above the title, breadcrumbs or an eyebrow label. */
     eyebrow?: React.ReactNode;
     className?: string;
 }

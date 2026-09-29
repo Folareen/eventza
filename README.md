@@ -6,17 +6,17 @@ An event ticketing platform. Organizers can create and sell tickets, attendees c
 
 Three apps in a monorepo:
 
-- **`apps/api`** — REST API (Express + PostgreSQL)
-- **`apps/web`** — main web app (Next.js)
-- **`apps/scanner`** — QR check-in app for event staff (Next.js)
-- **`packages/shared`** — shared TypeScript types
+- **`apps/api`** - REST API (Express + PostgreSQL)
+- **`apps/web`** - main web app (Next.js)
+- **`apps/scanner`** - QR check-in app for event staff (Next.js)
+- **`packages/shared`** - shared TypeScript types
 
 ## Features
 
 - Email/password auth + passwordless login via OTP email
 - JWT access tokens with refresh token rotation
 - Create events with categories, location, images (stored on S3)
-- Buy tickets — Stripe handles payments (payment intents + webhooks)
+- Buy tickets - Stripe handles payments (payment intents + webhooks)
 - QR codes generated per order for check-in
 - Staff log into the scanner app and scan QR codes to mark attendees as checked in
 - Organizer dashboard with charts (sales, attendance)
@@ -67,7 +67,7 @@ cp apps/scanner/.env.example apps/scanner/.env
 **`apps/api/.env`**
 
 ```env
-# Database (Postgres). SSL is required — see src/config/database.ts
+# Database (Postgres). SSL is required - see src/config/database.ts
 DB_HOST=
 DB_PORT=5432
 DB_NAME=
@@ -124,7 +124,7 @@ pnpm migrate
 
 ### Dev
 
-From the root — starts all three apps in parallel:
+From the root - starts all three apps in parallel:
 
 ```bash
 pnpm dev

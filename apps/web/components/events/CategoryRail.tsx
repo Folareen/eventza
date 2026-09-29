@@ -29,7 +29,7 @@ const ICONS: Record<string, React.ElementType> = {
 };
 
 interface CategoryRailProps {
-    /** Plain strings — safe to pass from a server component. */
+    /** Plain strings, safe to pass from a server component. */
     categories: readonly string[];
     active?: string;
 }

@@ -25,7 +25,7 @@ export function AuthShell({ children, quote, aside = true }: AuthShellProps) {
 
     return (
         <div className="flex min-h-screen bg-paper">
-            {/* Editorial panel — typography carries it, no gradient blobs. */}
+            {/* Editorial panel, typography carries it, no gradient blobs. */}
             <aside className="grain relative hidden w-[44%] flex-col justify-between overflow-hidden bg-ink p-12 lg:flex">
                 <Link href="/" className="relative z-10 inline-flex items-center gap-2 text-paper">
                     <svg viewBox="0 0 24 24" className="h-[22px] w-[22px]" aria-hidden>

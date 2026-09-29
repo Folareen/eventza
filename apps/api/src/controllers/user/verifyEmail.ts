@@ -17,7 +17,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
             return res.status(400).json({ error: "Email already verified" });
         }
 
-        // Verify OTP outside a transaction first — read-only check
+        // Verify OTP outside a transaction first, read-only check
         const otpVerification = await verifyOtp(user.id, otp, OtpType.EMAIL_VERIFICATION);
 
         if (!otpVerification.valid) {

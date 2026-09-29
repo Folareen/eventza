@@ -5,6 +5,10 @@ import { EventCard } from '@/components/events/EventCard';
 import { EventFilters } from '@/components/events/EventFilters';
 import { CategoryRail } from '@/components/events/CategoryRail';
 import { Footer } from '@/components/layout/Footer';
+import { HowItWorks } from '@/components/marketing/HowItWorks';
+import { OrganiserFeatures } from '@/components/marketing/OrganiserFeatures';
+import { PricingStrip } from '@/components/marketing/PricingStrip';
+import { Faq } from '@/components/marketing/Faq';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { EventCardSkeleton } from '@/components/ui/Skeleton';
 import { Button } from '@/components/ui/Button';
@@ -73,27 +77,20 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     const page = Number(sp.page ?? 1);
     const filtered = isFiltered(sp);
 
-    // Real counts from the API — no invented metrics.
     const total = pagination?.total ?? events.length;
     const cities = new Set(events.map((e) => e.state).filter(Boolean)).size;
 
     return (
         <main className="flex flex-1 flex-col">
-            {/* ── Hero ─────────────────────────────────────────────── */}
+            {/* Hero */}
             <section className="relative overflow-hidden border-b border-line bg-surface">
                 <div className="relative mx-auto grid max-w-[1240px] gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:gap-16 lg:py-24">
                     <div className="animate-rise">
-                        <p className="mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-text">
-                            <span className="h-px w-7 bg-accent" />
-                            Discover · Attend · Experience
-                        </p>
-
                         <h1 className="font-display text-[42px] leading-[1.04] tracking-tight text-ink sm:text-[56px] lg:text-[64px]">
                             Find events worth
                             <br />
                             <span className="relative inline-block">
                                 your time
-                                {/* Hand-drawn underline — a deliberately imperfect stroke. */}
                                 <svg
                                     className="absolute -bottom-2 left-0 h-[10px] w-full text-accent"
                                     viewBox="0 0 200 10"
@@ -112,8 +109,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                         </h1>
 
                         <p className="mt-7 max-w-md text-[17px] leading-relaxed text-ink-3">
-                            From intimate workshops to large-scale concerts — browse, book, and go.
-                            Everything in one place.
+                            Workshops, concerts, conferences and everything between. Find one,
+                            book a ticket, show up.
                         </p>
 
                         <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -139,19 +136,18 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                         )}
                     </div>
 
-                    {/* Editorial collage — real event imagery, not decorative blobs. */}
                     <HeroCollage events={events.slice(0, 3)} />
                 </div>
             </section>
 
-            {/* ── Category rail ────────────────────────────────────── */}
+            {/* Category rail */}
             <section className="border-b border-line bg-paper">
                 <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6">
                     <CategoryRail categories={CATEGORIES} active={sp.category} />
                 </div>
             </section>
 
-            {/* ── Events ───────────────────────────────────────────── */}
+            {/* Events */}
             <section id="events" className="mx-auto flex w-full max-w-[1240px] flex-1 flex-col gap-6 px-4 py-12 sm:px-6">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
@@ -220,7 +216,16 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                 )}
             </section>
 
-            {/* ── Host CTA ─────────────────────────────────────────── */}
+            {!filtered && (
+                <>
+                    <HowItWorks />
+                    <OrganiserFeatures />
+                    <PricingStrip />
+                    <Faq />
+                </>
+            )}
+
+            {/* Host CTA */}
             <section className="border-t border-line bg-surface">
                 <div className="mx-auto max-w-[1240px] px-4 py-20 sm:px-6">
                     <div className="grain relative overflow-hidden rounded-[var(--radius-panel)] bg-ink px-8 py-14 text-center sm:px-16">
@@ -231,8 +236,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                             Ready to host your own event?
                         </h2>
                         <p className="mx-auto mt-5 max-w-md text-[15px] leading-relaxed text-paper/65">
-                            Create an event, set up tickets, and reach your audience — all from one
-                            dashboard. No setup fees.
+                            Publish your event, sell tickets, and scan people in at the door.
+                            You only pay when you sell.
                         </p>
                         <div className="mt-9 flex flex-wrap justify-center gap-3">
                             <Link

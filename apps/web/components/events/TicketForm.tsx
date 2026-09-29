@@ -57,7 +57,7 @@ export function TicketForm({ initialData, onSubmit, onCancel, loading }: TicketF
                 error={errors.description?.message}
                 placeholder="What's included with this ticket?"
                 rows={2}
-                hint="Optional — shown under the ticket name at checkout."
+                hint="Optional, shown under the ticket name at checkout."
             />
             <div className="grid gap-4 sm:grid-cols-2">
                 <Input

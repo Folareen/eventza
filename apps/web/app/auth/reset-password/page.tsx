@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
         });
         const body = await res.json();
         if (!res.ok) { toast.error(body.error ?? 'Failed to reset password'); return; }
-        toast.success('Password updated — sign in with it now');
+        toast.success('Password updated, sign in with it now');
         router.push('/auth/login');
     });
 

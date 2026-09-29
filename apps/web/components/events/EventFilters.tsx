@@ -31,7 +31,7 @@ export function EventFilters() {
         setEndDate(sp.get('endDate') ?? '');
     }, [sp]);
 
-    // Count only the advanced filters — search has its own visible field.
+    // Count only the advanced filters, search has its own visible field.
     const activeCount = [country, category, startDate, endDate].filter(Boolean).length;
 
     const push = (overrides: Record<string, string> = {}) => {

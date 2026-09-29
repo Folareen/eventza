@@ -190,7 +190,7 @@ export function PurchaseTicketButton({ eventId, ticket }: Props) {
                                 {orders.length > 1 ? `${orders.length} tickets confirmed` : 'Ticket confirmed'}
                             </p>
                             <p className="mt-1.5 text-[13px] leading-relaxed text-ink-3">
-                                We&apos;ve emailed your {orders.length > 1 ? 'QR codes' : 'QR code'} — show
+                                We&apos;ve emailed your {orders.length > 1 ? 'QR codes' : 'QR code'}, show
                                 {orders.length > 1 ? ' them' : ' it'} at the door.
                             </p>
                         </div>

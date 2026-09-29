@@ -140,7 +140,7 @@ export function OrdersTable({ orders, ticketNames }: OrdersTableProps) {
                                     </td>
                                     {ticketNames && (
                                         <td className={cn(td, 'hidden lg:table-cell text-[13px] text-ink-2')}>
-                                            {ticketNames[order.ticketId] ?? '—'}
+                                            {ticketNames[order.ticketId] ?? '-'}
                                         </td>
                                     )}
                                     <td className={cn(td, 'text-right font-medium text-ink tabular-nums')}>
@@ -158,7 +158,7 @@ export function OrdersTable({ orders, ticketNames }: OrdersTableProps) {
                                             </span>
                                         ) : (
                                             <span className="inline-flex items-center gap-1 text-[13px] text-ink-4">
-                                                <RiSubtractLine className="h-4 w-4" /> —
+                                                <RiSubtractLine className="h-4 w-4" /> -
                                             </span>
                                         )}
                                     </td>

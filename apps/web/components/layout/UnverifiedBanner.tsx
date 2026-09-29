@@ -17,7 +17,7 @@ export function UnverifiedBanner() {
                 <RiMailLine className="h-4 w-4 shrink-0 text-warning" />
                 <p className="flex-1 text-[13px] text-ink-2 leading-snug">
                     <span className="font-medium">Verify your email</span>
-                    <span className="hidden sm:inline text-ink-3"> — some features stay restricted until you do.</span>
+                    <span className="hidden sm:inline text-ink-3">. Some features stay restricted until you do.</span>
                 </p>
                 <Link
                     href="/dashboard/account#verify"

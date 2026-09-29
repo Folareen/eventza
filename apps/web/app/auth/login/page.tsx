@@ -58,7 +58,7 @@ function LoginForm() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
             setMagicEmail(email);
-            toast.success('Code sent — check your inbox');
+            toast.success('Code sent, check your inbox');
             setMode('magic-verify');
         } catch (err: any) {
             toast.error(err?.message ?? 'Failed to send code');

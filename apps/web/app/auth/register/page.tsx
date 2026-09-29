@@ -28,7 +28,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-/** Live requirement checklist — better than one error string that only
+/** Live requirement checklist, better than one error string that only
  *  tells you about the first rule you broke. */
 const RULES = [
     { label: '8+ characters', test: (v: string) => v.length >= 8 },
@@ -50,7 +50,7 @@ export default function RegisterPage() {
     const onSubmit = handleSubmit(async (data) => {
         try {
             await authRegister(data);
-            toast.success('Account created — welcome to eventza');
+            toast.success('Account created, welcome to eventza');
             router.push('/dashboard/events');
         } catch (err: any) {
             toast.error(err?.message ?? 'Registration failed');
@@ -64,7 +64,7 @@ export default function RegisterPage() {
                 attribution: 'Start selling tickets in minutes. No setup fees.',
             }}
         >
-            <AuthHeading title="Create your account" subtitle="Free to start — no card required." />
+            <AuthHeading title="Create your account" subtitle="Free to start, no card required." />
 
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-3">

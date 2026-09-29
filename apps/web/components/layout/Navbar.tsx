@@ -93,6 +93,8 @@ export function Navbar() {
                     <Logo />
                     <nav className="hidden md:flex items-center gap-6">
                         {navLink('/', 'Discover', pathname === '/')}
+                        {navLink('/host', 'Host', pathname === '/host')}
+                        {navLink('/pricing', 'Pricing', pathname === '/pricing')}
                         {user && navLink('/dashboard/events', 'Dashboard', pathname.startsWith('/dashboard'))}
                     </nav>
                 </div>
@@ -185,6 +187,8 @@ export function Navbar() {
                 <div className="md:hidden border-t border-line bg-paper animate-rise">
                     <nav className="flex flex-col gap-0.5 px-3 py-3">
                         <MobileLink href="/" label="Discover" />
+                        <MobileLink href="/host" label="Host" />
+                        <MobileLink href="/pricing" label="Pricing" />
                         {user && <MobileLink href="/dashboard/events" label="Dashboard" />}
                         {user && <MobileLink href="/dashboard/events/new" label="Create event" />}
                         {user && <MobileLink href="/dashboard/account" label="Account" />}

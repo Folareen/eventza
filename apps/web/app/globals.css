@@ -15,7 +15,7 @@
         font-feature-settings: "cv11", "ss01";
     }
 
-    /* Display face for headings — set per-element, not globally,
+    /* Display face for headings, set per-element, not globally,
        so UI chrome (buttons, labels, tables) stays in Geist. */
     .font-display {
         font-family: var(--font-display), Georgia, serif;

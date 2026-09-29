@@ -13,7 +13,7 @@ export default function NewEventPage() {
     const handleSubmit = async (formData: FormData) => {
         try {
             const result = await createEvent(formData);
-            toast.success('Event created — add tickets next');
+            toast.success('Event created, add tickets next');
             router.push(`/dashboard/events/${result.event.id}/tickets`);
         } catch (err: any) {
             toast.error(err?.message ?? 'Failed to create event');

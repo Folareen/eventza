@@ -1,8 +1,8 @@
-/* Shared design tokens — imported by every eventza frontend.
+/* Shared design tokens, imported by every eventza frontend.
    Edit here, never in an app's globals.css. */
 
 :root {
-    /* Warm neutral ramp — paper through ink */
+    /* Warm neutral ramp, paper through ink */
     --paper:        #FBFAF8;
     --surface:      #FFFFFF;
     --surface-2:    #F5F3EF;
@@ -15,7 +15,7 @@
     --ink-3:        #6B665C;
     --ink-4:        #9A9488;
 
-    /* Ember — the single brand accent */
+    /* Ember, the single brand accent */
     --accent:       #C2410C;
     --accent-hover: #9A3412;
     --accent-soft:  #FDF0E7;
@@ -35,7 +35,7 @@
 
     --focus:        #C2410C;
 
-    /* Elevation — warm-tinted, never neutral black */
+    /* Elevation, warm-tinted, never neutral black */
     --shadow-sm: 0 1px 2px rgba(23, 22, 20, .05);
     --shadow-md: 0 2px 4px rgba(23, 22, 20, .04), 0 4px 12px rgba(23, 22, 20, .06);
     --shadow-lg: 0 4px 8px rgba(23, 22, 20, .04), 0 12px 32px rgba(23, 22, 20, .10);
@@ -117,12 +117,12 @@
     --shadow-lg: var(--shadow-lg);
     --shadow-xl: var(--shadow-xl);
 
-    /* Radii — 3 steps only: controls, cards, pills */
+    /* Radii, 3 steps only: controls, cards, pills */
     --radius-control: 8px;
     --radius-card:    14px;
     --radius-panel:   20px;
 
-    /* Motion — one easing family, three durations */
+    /* Motion, one easing family, three durations */
     --ease-out-quint: cubic-bezier(.22, 1, .36, 1);
     --ease-spring:    cubic-bezier(.34, 1.56, .64, 1);
 }
@@ -187,7 +187,7 @@
 .stagger > *:nth-child(11) { animation-delay: .42s; }
 .stagger > *:nth-child(12) { animation-delay: .46s; }
 
-/* Skeleton placeholder — warm shimmer, not grey pulse */
+/* Skeleton placeholder, warm shimmer, not grey pulse */
 .skeleton {
     background: linear-gradient(
         90deg,
@@ -212,7 +212,7 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Hairline rule that fades at both ends — used as section divider */
+/* Hairline rule that fades at both ends, used as section divider */
 .rule-fade {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--line) 15%, var(--line) 85%, transparent);

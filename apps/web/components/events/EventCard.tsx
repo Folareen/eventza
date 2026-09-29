@@ -7,7 +7,7 @@ import type { Event } from '@/lib/types';
 
 interface EventCardProps {
     event: Event;
-    /** Index in a grid — drives the entrance stagger. */
+    /** Index in a grid, drives the entrance stagger. */
     index?: number;
 }
 
@@ -54,7 +54,7 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
                 {/* Scrim anchors the date block regardless of image brightness. */}
                 <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-ink/45 to-transparent" />
 
-                {/* Calendar-block motif — the card's signature element. */}
+                {/* Calendar-block motif, the card's signature element. */}
                 <div className="absolute left-3 top-3 flex h-[46px] w-[46px] flex-col items-center justify-center rounded-[10px] bg-surface/95 shadow-md backdrop-blur-sm">
                     <span className="text-[9px] font-semibold uppercase leading-none tracking-[0.08em] text-accent">
                         {month}
